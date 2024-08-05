@@ -24,8 +24,9 @@ class ContactViewModel(): ViewModel() {
     }
 
     private fun getContacts(id:String?) {
+        isLoading.value = true
+
         viewModelScope.launch(Dispatchers.IO) {
-//            isLoading.value = true
             try {
                 val response = repository.getContacts(id)
                 withContext(Dispatchers.Main) {

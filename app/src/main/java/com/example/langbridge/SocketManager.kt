@@ -3,22 +3,34 @@ package com.example.langbridge
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
+import com.example.langbridge.messages.data.models.Message
+import com.example.langbridge.messages.data.models.SocketMessage
 import com.example.langbridge.utils.InternetConnectivityManager
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.websocket.WebSockets
+import io.ktor.client.plugins.websocket.webSocket
+import io.ktor.http.HttpMethod
+import io.ktor.websocket.DefaultWebSocketSession
+import io.ktor.websocket.Frame
+import io.ktor.websocket.close
+import io.ktor.websocket.readText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.Socket
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+
 
 const val socketIp = "192.168.43.113"
-const val socketPort = 12345
+const val socketPort = 12344
 
-class SocketManager(private val context: Context) {
+class SocketManager(context: Context) {
     private var job: Job? = null
-    private var socket: Socket? = null
+    private var client: HttpClient? = null
+    private var webSocketSession: DefaultWebSocketSession? = null
     private var internetConnectivityManager: InternetConnectivityManager? = null
     private val connectionListener = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
@@ -26,22 +38,54 @@ class SocketManager(private val context: Context) {
             connect()
         }
     }
+    private var onMessageReceivedCallback: ((Message?) -> Unit)? = null
 
     init {
         internetConnectivityManager = InternetConnectivityManager(context, connectionListener)
+        connect()
     }
 
-
-    fun connect() {
-        try {
-            disconnect()
-            socket = Socket(socketIp, socketPort)
-        } catch (e: Exception) {
-            e.printStackTrace()
+    private fun createClient(): HttpClient {
+        return HttpClient(CIO) {
+            install(WebSockets)
         }
     }
 
-    fun startListening(callback: (String) -> Unit) {
+    fun setOnMessageReceivedCallback(callback: (Message?) -> Unit) {
+        onMessageReceivedCallback = callback
+    }
+
+    fun connect() {
+        job = CoroutineScope(Dispatchers.IO).launch {
+            disconnect()
+            client = createClient()
+            try {
+                client?.webSocket(
+                    method = HttpMethod.Get,
+                    host = socketIp,
+                    port = socketPort,
+                    path = "/ws/${UserInfo.id}"
+                ) {
+                    webSocketSession = this
+
+                    while (true) {
+                        val frame = incoming.receive()
+                        if (frame is Frame.Text) {
+                            val text = frame.readText()
+                            val message = parseMessage(text)
+                            withContext(Dispatchers.Main) {
+                                message?.let { onMessageReceivedCallback?.invoke(it.message) }
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    /*fun startListening(callback: (Message) -> Unit) {
         if (internetConnectivityManager?.isConnected() == false) {
             return
         }
@@ -50,13 +94,13 @@ class SocketManager(private val context: Context) {
             try {
                 val input = BufferedReader(InputStreamReader(socket?.getInputStream()))
 
-                // Continuously listen for messages
                 while (true) {
-                    val message = input.readLine() ?: break // Exit loop on null message
+                    val json = input.readLine() ?: break
 
-                    // Update receivedMessage via callback
+                    val message = parseMessage(json)
+
                     withContext(Dispatchers.Main) {
-                        callback(message)
+                        message?.let { callback(it) }
                     }
                 }
 
@@ -64,14 +108,34 @@ class SocketManager(private val context: Context) {
                 e.printStackTrace()
             }
         }
+    }*/
+
+    suspend fun sendMessage(message: SocketMessage) {
+        val json = Json.encodeToString(SocketMessage.serializer(), message)
+        webSocketSession?.send(Frame.Text(json))
     }
 
-    fun disconnect() {
-        socket?.close()
+
+
+    private fun parseMessage(json: String): SocketMessage? {
+        return try {
+            Json.decodeFromString<SocketMessage>(json)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    private suspend fun disconnect() {
+        webSocketSession?.close()
+        client?.close()
     }
 
 
-    fun stopListening() {
+    suspend fun stopListening() {
+        disconnect()
         job?.cancel()
     }
+
+
 }
