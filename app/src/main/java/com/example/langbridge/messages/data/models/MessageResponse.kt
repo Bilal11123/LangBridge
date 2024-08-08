@@ -21,9 +21,14 @@ data class Message (
 }
 
 @Serializable
+data class ConversationIdResponse(
+    @SerialName("conversation_id") val conversationId: String
+)
+
+@Serializable
 data class SocketMessage(
     @SerialName("message") val message: Message?,
-    @SerialName("conversation_id") val conversationId: String?
+    @SerialName("conversation_id") val conversationId: String?=null
 )
 
 @Serializable

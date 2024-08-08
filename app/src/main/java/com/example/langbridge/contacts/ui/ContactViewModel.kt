@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ContactViewModel(): ViewModel() {
+class ContactViewModel: ViewModel() {
 
     var name = mutableStateOf(UserInfo.name)
     private val repository: ContactRepository = ContactRepositoryImpl()
@@ -20,15 +20,15 @@ class ContactViewModel(): ViewModel() {
     val error = mutableStateOf<String?>(null)
 
     init {
-        getContacts(UserInfo.id)
+        getContacts()
     }
 
-    private fun getContacts(id:String?) {
+    fun getContacts() {
         isLoading.value = true
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = repository.getContacts(id)
+                val response = repository.getContacts(UserInfo.id)
                 withContext(Dispatchers.Main) {
                     contactResponse.value = response
                 }

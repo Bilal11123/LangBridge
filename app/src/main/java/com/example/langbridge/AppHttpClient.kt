@@ -20,12 +20,14 @@ object ApiEndpoints {
     const val CONTACT_LIST = "contactlist/"
     const val LOGOUT = "logout/"
     const val MESSAGE_LIST = "messagelist/"
+    const val USER_LIST = "userlist/"
+    const val ADD_CONVERSATION = "addconversation/"
 
 }
 
 class AppHttpClient {
     private val baseUrl = "http://$ip:$port/"
-    val client = HttpClient {
+    private val client = HttpClient {
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true }) // Configure JSON serialization
         }

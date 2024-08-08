@@ -2,7 +2,7 @@ plugins {
     kotlin("plugin.serialization") version "1.9.0"
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-
+    id("kotlin-parcelize")
 }
 
 android {
@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation (libs.androidx.material)
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.androidx.navigation.compose)
     testImplementation(libs.junit)
@@ -79,8 +80,6 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation (libs.bson)
     implementation (libs.mongodb.driver.sync)
-//    implementation(libs.gson)
     testImplementation(kotlin("test"))
-
 
 }

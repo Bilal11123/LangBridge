@@ -1,19 +1,19 @@
 package com.example.langbridge
 
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.example.langbridge.contacts.ui.ContactScreen
 import com.example.langbridge.login.ui.LoginScreen
-import com.example.langbridge.login.ui.LoginViewModel
 import com.example.langbridge.messages.ui.MessageScreen
+import com.example.langbridge.users.ui.UserScreen
+import kotlinx.parcelize.Parcelize
 
 
 @Composable
@@ -22,20 +22,25 @@ fun App() {
 
     NavHost(navController = navController, startDestination = "login") {
         composable("login") {
-            val viewModel : LoginViewModel = viewModel()
-            LoginScreen(navController,viewModel)
+            LoginScreen(navController)
         }
         composable("contacts") {
             ContactScreen(navController)
         }
-        composable("messages/{contact_id}",
-            arguments = listOf(navArgument("contact_id") { type = NavType.StringType })
-        ) {
-            val contactId= it.arguments?.getString("contact_id")
-            MessageScreen(navController,contactId)
+        composable("users") {
+            UserScreen(navController)
+        }
+        composable<Screens.Messages>{
+            val message = it.toRoute<Screens.Messages>()
+            MessageScreen(navController,message)
         }
     }
 }
+
+@Parcelize
+data class Test(
+    val name: String
+):Parcelable
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

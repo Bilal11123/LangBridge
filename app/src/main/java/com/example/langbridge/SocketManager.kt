@@ -32,6 +32,9 @@ class SocketManager(context: Context) {
     private var client: HttpClient? = null
     private var webSocketSession: DefaultWebSocketSession? = null
     private var internetConnectivityManager: InternetConnectivityManager? = null
+    private var conversationId: String? = null
+
+
     private val connectionListener = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
@@ -41,8 +44,9 @@ class SocketManager(context: Context) {
     private var onMessageReceivedCallback: ((Message?) -> Unit)? = null
 
     init {
+        client = createClient()
         internetConnectivityManager = InternetConnectivityManager(context, connectionListener)
-        connect()
+        internetConnectivityManager?.registerConnectivityManager()
     }
 
     private fun createClient(): HttpClient {
@@ -51,23 +55,29 @@ class SocketManager(context: Context) {
         }
     }
 
+    fun setConversationId(conversationId: String?){
+        this.conversationId = conversationId
+    }
+
     fun setOnMessageReceivedCallback(callback: (Message?) -> Unit) {
         onMessageReceivedCallback = callback
     }
 
     fun connect() {
+        if (conversationId == "default") {
+            return
+        }
+
         job = CoroutineScope(Dispatchers.IO).launch {
             disconnect()
-            client = createClient()
             try {
                 client?.webSocket(
                     method = HttpMethod.Get,
                     host = socketIp,
                     port = socketPort,
-                    path = "/ws/${UserInfo.id}"
+                    path = "/ws/${UserInfo.id}/${conversationId}"
                 ) {
                     webSocketSession = this
-
                     while (true) {
                         val frame = incoming.receive()
                         if (frame is Frame.Text) {
@@ -85,36 +95,10 @@ class SocketManager(context: Context) {
         }
     }
 
-    /*fun startListening(callback: (Message) -> Unit) {
-        if (internetConnectivityManager?.isConnected() == false) {
-            return
-        }
-
-        job = CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val input = BufferedReader(InputStreamReader(socket?.getInputStream()))
-
-                while (true) {
-                    val json = input.readLine() ?: break
-
-                    val message = parseMessage(json)
-
-                    withContext(Dispatchers.Main) {
-                        message?.let { callback(it) }
-                    }
-                }
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }*/
-
     suspend fun sendMessage(message: SocketMessage) {
         val json = Json.encodeToString(SocketMessage.serializer(), message)
         webSocketSession?.send(Frame.Text(json))
     }
-
 
 
     private fun parseMessage(json: String): SocketMessage? {
@@ -128,14 +112,21 @@ class SocketManager(context: Context) {
 
     private suspend fun disconnect() {
         webSocketSession?.close()
-        client?.close()
+        webSocketSession = null
     }
 
 
-    suspend fun stopListening() {
-        disconnect()
+    fun stopListening() {
+        CoroutineScope(Dispatchers.IO).launch {
+            disconnect()
+        }
+        client?.close()
+        client = null
         job?.cancel()
     }
 
+    fun unregisterConnectivityManager() {
+        internetConnectivityManager?.unregisterConnectivityManager()
+    }
 
 }
