@@ -1,7 +1,5 @@
 [versions]
 accompanistInsets = "0.23.0"
-accompanistSwiperefresh = "<latest-version>"
-accompanistSwiperefreshVersion = "0.30.1"
 agp = "8.5.1"
 material = "1.6.8"
 mongodb = "5.1.2"
@@ -23,7 +21,6 @@ firebaseCrashlyticsBuildtools = "3.0.2"
 navigationCompose = "2.8.0-beta06"
 
 [libraries]
-accompanist-insets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanistInsets" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
