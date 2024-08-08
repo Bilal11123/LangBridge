@@ -1,7 +1,6 @@
 package com.example.langbridge.messages.ui
 
 
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -52,7 +51,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessageScreen(navController: NavController, message: Screens.Messages, viewModel: MessageViewModel = viewModel()) {
+fun MessageScreen(
+    navController: NavController,
+    message: Screens.Messages,
+    viewModel: MessageViewModel = viewModel()
+) {
     LaunchedEffect(key1 = false) {
         viewModel.setArgs(message)
         viewModel.createConversation()
@@ -60,7 +63,7 @@ fun MessageScreen(navController: NavController, message: Screens.Messages, viewM
         viewModel.startListening()
     }
 
-    Scaffold (
+    Scaffold(
         topBar = {
             TopAppBar(
                 navigationIcon = {
@@ -70,7 +73,7 @@ fun MessageScreen(navController: NavController, message: Screens.Messages, viewM
                         }
                     ) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Settings",
                             tint = Color.White
                         )
@@ -79,7 +82,7 @@ fun MessageScreen(navController: NavController, message: Screens.Messages, viewM
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Blue),
                 title = {
                     Text(
-                        text =message.receiverName?:"",
+                        text = message.receiverName ?: "",
                         style = TextStyle(
                             fontSize = 20.sp,
                             color = Color.White,
@@ -104,12 +107,12 @@ fun MessagesListView(it: PaddingValues, viewModel: MessageViewModel) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
-    Column (
+    Column(
         modifier = Modifier
             .imePadding()
             .padding(it)
             .fillMaxWidth()
-    ){
+    ) {
         LazyColumn(
             state = listState,
             modifier = Modifier
@@ -128,13 +131,13 @@ fun MessagesListView(it: PaddingValues, viewModel: MessageViewModel) {
             }
         }
 
-        LaunchedEffect (key1 = false){
+        LaunchedEffect(key1 = false) {
             coroutineScope.launch {
                 listState.scrollToItem(messageList?.size ?: 0)
             }
         }
 
-        LaunchedEffect (messageList) {
+        LaunchedEffect(messageList) {
             coroutineScope.launch {
                 listState.scrollToItem(messageList?.size ?: 0)
             }
@@ -173,7 +176,7 @@ fun MessagesListView(it: PaddingValues, viewModel: MessageViewModel) {
 @Composable
 fun SenderMessageView(message: Message?) {
     Text(
-        text = message?.message?:"",
+        text = message?.message ?: "",
         textAlign = TextAlign.Start,
         modifier = Modifier.fillMaxWidth(),
         color = Color.Green
@@ -183,7 +186,7 @@ fun SenderMessageView(message: Message?) {
 @Composable
 fun ReceiverMessageView(message: Message?) {
     Text(
-        text = message?.message?:"",
+        text = message?.message ?: "",
         textAlign = TextAlign.End,
         modifier = Modifier.fillMaxWidth(),
         color = Color.Red

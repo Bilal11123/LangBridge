@@ -16,14 +16,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.bson.types.ObjectId
 
-class MessageViewModel(context: Application): AndroidViewModel(context) {
+class MessageViewModel(context: Application) : AndroidViewModel(context) {
     private val repository: MessageRepository = MessageRepositoryImpl()
     val messageList = mutableStateOf<List<Message?>?>(null)
     var error = mutableStateOf("")
     var isLoading = mutableStateOf(false)
     private var conversationId: String? = "default"
     private var receiverId: String? = "default"
-    private val socketManager: SocketManager by lazy {  SocketManager(context) }
+    private val socketManager: SocketManager by lazy { SocketManager(context) }
 
     fun setArgs(messages: Screens.Messages) {
         this.conversationId = messages.contactId
@@ -31,8 +31,8 @@ class MessageViewModel(context: Application): AndroidViewModel(context) {
         socketManager.setConversationId(conversationId)
     }
 
-    fun createConversation(){
-        if (conversationId == "default"){
+    fun createConversation() {
+        if (conversationId == "default") {
             messageList.value = emptyList()
             viewModelScope.launch(Dispatchers.IO) {
                 val response = repository.createConversation(receiverId)
@@ -55,13 +55,13 @@ class MessageViewModel(context: Application): AndroidViewModel(context) {
         }
     }
 
-    private fun stopListening(){
+    private fun stopListening() {
         socketManager.stopListening()
     }
 
 
     fun getMessageList() {
-        if(conversationId == "default")
+        if (conversationId == "default")
             return
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -71,7 +71,7 @@ class MessageViewModel(context: Application): AndroidViewModel(context) {
                 }
             } catch (e: Exception) {
                 // Handle exceptions
-                withContext(Dispatchers.Main){
+                withContext(Dispatchers.Main) {
                     error.value = "Failed to fetch messages: ${e.message}"
                 }
             } finally {

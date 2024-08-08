@@ -6,7 +6,10 @@ import android.net.ConnectivityManager.NetworkCallback
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 
-class InternetConnectivityManager(private val context: Context, private val networkCallback: NetworkCallback) {
+class InternetConnectivityManager(
+    private val context: Context,
+    private val networkCallback: NetworkCallback
+) {
 
     private val networkRequest = NetworkRequest.Builder()
         .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
@@ -20,7 +23,7 @@ class InternetConnectivityManager(private val context: Context, private val netw
 
 
     fun isConnected(): Boolean {
-      return  connectivityManager.isDefaultNetworkActive
+        return connectivityManager.isDefaultNetworkActive
     }
 
     fun registerConnectivityManager() {

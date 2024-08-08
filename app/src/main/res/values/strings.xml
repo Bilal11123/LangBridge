@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">LangBridge</string>
+    <string name="label_users">Users</string>
 </resources>

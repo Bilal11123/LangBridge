@@ -5,9 +5,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
@@ -20,12 +23,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,6 +45,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.langbridge.Screens
 import com.example.langbridge.UserInfo
+import com.example.langbridge.common.ChooseLanguageDialog
 import com.example.langbridge.contacts.data.models.Contact
 
 
@@ -45,7 +53,14 @@ import com.example.langbridge.contacts.data.models.Contact
 @Composable
 fun ContactScreen(navController: NavController, viewModel: ContactViewModel = viewModel()) {
     val contactResponse by viewModel.contactResponse
+    var showDialog by remember { mutableStateOf(false) }
 
+    if (showDialog) {
+        ChooseLanguageDialog { language ->
+            viewModel.changeLanguage(language)
+            showDialog = false
+        }
+    }
     val pullRefreshState =
         rememberPullRefreshState(refreshing = viewModel.isLoading.value, onRefresh = {
             viewModel.getContacts()
@@ -59,7 +74,7 @@ fun ContactScreen(navController: NavController, viewModel: ContactViewModel = vi
                 ), textAlign = TextAlign.Left
             )
         }, actions = {
-            IconButton(onClick = { }) {
+            IconButton(onClick = { showDialog = true }) {
                 Icon(
                     imageVector = Icons.Filled.Settings,
                     contentDescription = "Settings",
@@ -75,10 +90,12 @@ fun ContactScreen(navController: NavController, viewModel: ContactViewModel = vi
         }, onClick = { navController.navigate("users") })
     }) {
         Box(
-            modifier = Modifier.padding(it).pullRefresh(pullRefreshState)
+            modifier = Modifier
+                .padding(it)
+                .pullRefresh(pullRefreshState)
         ) {
             LazyColumn(
-                modifier = Modifier.fillMaxSize() ,
+                modifier = Modifier.fillMaxSize(),
             ) {
                 items(contactResponse?.contacts?.size ?: 0) { index ->
                     ContactItem(contactResponse?.contacts?.get(index), onItemClick = { contact ->
@@ -99,6 +116,24 @@ fun ContactScreen(navController: NavController, viewModel: ContactViewModel = vi
                 state = pullRefreshState
             )
 
+        }
+    }
+}
+
+@Composable
+fun RadioButtonGroup(
+    options: Map<String, String>, selectedOption: String?, onOptionSelected: (String) -> Unit
+) {
+    Column {
+        options.entries.forEach { option ->
+            Row(
+                Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(selected = (option.key == selectedOption),
+                    onClick = { onOptionSelected(option.key) })
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(option.value)
+            }
         }
     }
 }

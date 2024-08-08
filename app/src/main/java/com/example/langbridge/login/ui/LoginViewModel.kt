@@ -44,11 +44,10 @@ class LoginViewModel : ViewModel() {
         _loginResponse.value = null
     }
 
-    fun resetStates(){
+    fun resetStates() {
         resetError()
         resetLoginResponse()
     }
-
 
 
     /* suspend fun logout(email: String) {

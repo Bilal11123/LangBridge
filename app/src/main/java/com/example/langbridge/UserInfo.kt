@@ -1,5 +1,6 @@
 package com.example.langbridge
 
+
 object UserInfo {
     var name: String? = ""
     var email: String? = ""

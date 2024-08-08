@@ -22,6 +22,7 @@ object ApiEndpoints {
     const val MESSAGE_LIST = "messagelist/"
     const val USER_LIST = "userlist/"
     const val ADD_CONVERSATION = "addconversation/"
+    const val CHANGE_LANGUAGE = "changelanguage/"
 
 }
 
@@ -33,8 +34,8 @@ class AppHttpClient {
         }
     }
 
-    suspend fun post(endPoint:String,parameters: Parameters): HttpResponse {
-       return client.post("$baseUrl$endPoint") {
+    suspend fun post(endPoint: String, parameters: Parameters): HttpResponse {
+        return client.post("$baseUrl$endPoint") {
             contentType(Application.FormUrlEncoded)
             setBody(FormDataContent(parameters))
         }

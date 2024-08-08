@@ -73,7 +73,8 @@ fun LoginScreen(navController: NavHostController, loginVM: LoginViewModel = view
             ),
             keyboardActions = KeyboardActions(onDone = {
                 // Handle action when the 'Done' button is pressed on the keyboard
-            }))
+            })
+        )
 
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly

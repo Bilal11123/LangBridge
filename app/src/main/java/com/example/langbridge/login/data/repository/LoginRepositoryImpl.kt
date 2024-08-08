@@ -8,7 +8,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.Parameters
 import kotlinx.serialization.json.Json
 
-class LoginRepositoryImpl:LoginRepository {
+class LoginRepositoryImpl : LoginRepository {
     private val httpClient = AppHttpClient()
 
     override suspend fun login(email: String, password: String): LoginResponse {
@@ -27,7 +27,7 @@ class LoginRepositoryImpl:LoginRepository {
                 Json.decodeFromString<LoginResponse>(responseBody)
             } catch (e: Exception) {
                 // If parsing fails, treat the response as a plain text message
-                LoginResponse(status = "error",  name = "Unknown", )
+                LoginResponse(status = "error", name = "Unknown")
             }
         } catch (e: Exception) {
             LoginResponse(status = "error", name = "Unknown")

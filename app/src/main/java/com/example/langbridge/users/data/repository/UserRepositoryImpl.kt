@@ -8,15 +8,15 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.Parameters
 import kotlinx.serialization.json.Json
 
-class UserRepositoryImpl: UserRepository {
+class UserRepositoryImpl : UserRepository {
     private val httpClient = AppHttpClient()
 
-    override suspend fun getUsers(id:String?): UserResponse {
+    override suspend fun getUsers(id: String?): UserResponse {
         return try {
             val response: HttpResponse = httpClient.post(
                 ApiEndpoints.USER_LIST,
                 Parameters.build {
-                    append("id", id?:"")
+                    append("id", id ?: "")
 
                 })
             val responseBody = response.bodyAsText()

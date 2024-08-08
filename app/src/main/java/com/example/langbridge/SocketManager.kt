@@ -54,7 +54,7 @@ class SocketManager(context: Context) {
         }
     }
 
-    fun setConversationId(conversationId: String?){
+    fun setConversationId(conversationId: String?) {
         this.conversationId = conversationId
     }
 

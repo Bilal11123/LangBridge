@@ -41,8 +41,8 @@ class MessageRepositoryImpl : MessageRepository {
 
             val response: HttpResponse =
                 httpClient.post(ApiEndpoints.ADD_CONVERSATION, Parameters.build {
-                    append("id", UserInfo.id?:"")
-                    append("other_id", receiverId?:"")
+                    append("id", UserInfo.id ?: "")
+                    append("other_id", receiverId ?: "")
 
                 })
 

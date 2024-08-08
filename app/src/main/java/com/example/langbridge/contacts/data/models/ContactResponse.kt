@@ -14,3 +14,8 @@ data class Contact(
 data class ContactResponse(
     @SerialName("contacts") val contacts: List<Contact>?
 )
+
+@Serializable
+data class LanguageChangeResponse(
+    @SerialName("status") val status: String?
+)

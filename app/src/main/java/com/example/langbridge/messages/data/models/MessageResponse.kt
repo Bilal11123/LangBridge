@@ -5,7 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Message (
+data class Message(
     @SerialName("id") val id: String?,
     @SerialName("message") val message: String?,
     @SerialName("sender_id") val senderId: String?,
@@ -28,11 +28,11 @@ data class ConversationIdResponse(
 @Serializable
 data class SocketMessage(
     @SerialName("message") val message: Message?,
-    @SerialName("conversation_id") val conversationId: String?=null
+    @SerialName("conversation_id") val conversationId: String? = null
 )
 
 @Serializable
-data class MessageResponse (
+data class MessageResponse(
     @SerialName("messages") val messages: List<Message>?
 )
 

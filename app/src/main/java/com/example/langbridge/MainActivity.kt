@@ -1,9 +1,8 @@
 package com.example.langbridge
 
 import android.os.Bundle
-import android.os.Parcelable
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,7 +12,6 @@ import com.example.langbridge.contacts.ui.ContactScreen
 import com.example.langbridge.login.ui.LoginScreen
 import com.example.langbridge.messages.ui.MessageScreen
 import com.example.langbridge.users.ui.UserScreen
-import kotlinx.parcelize.Parcelize
 
 
 @Composable
@@ -30,24 +28,22 @@ fun App() {
         composable("users") {
             UserScreen(navController)
         }
-        composable<Screens.Messages>{
+        composable<Screens.Messages> {
             val message = it.toRoute<Screens.Messages>()
-            MessageScreen(navController,message)
+            MessageScreen(navController, message)
         }
     }
 }
 
-@Parcelize
-data class Test(
-    val name: String
-):Parcelable
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-            setContent{
-                App()
-            }
+        setContent {
+            App()
+        }
+
+
     }
 }
 

@@ -1,5 +1,5 @@
 package com.example.langbridge.messages.data.models
 
-enum class MessageType{
+enum class MessageType {
     SENDER, RECEIVER
 }

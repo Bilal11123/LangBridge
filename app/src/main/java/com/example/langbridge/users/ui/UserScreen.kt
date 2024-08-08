@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.langbridge.R
 import com.example.langbridge.Screens
 import com.example.langbridge.users.data.models.User
 
@@ -38,7 +40,7 @@ import com.example.langbridge.users.data.models.User
 fun UserScreen(navController: NavController, viewModel: UserViewModel = viewModel()) {
     val users by viewModel.users
 
-    Scaffold (
+    Scaffold(
         topBar = {
             TopAppBar(
                 navigationIcon = {
@@ -48,7 +50,7 @@ fun UserScreen(navController: NavController, viewModel: UserViewModel = viewMode
                         }
                     ) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Settings",
                             tint = Color.White
                         )
@@ -57,7 +59,7 @@ fun UserScreen(navController: NavController, viewModel: UserViewModel = viewMode
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Blue),
                 title = {
                     Text(
-                        text = "Users",
+                        text = stringResource(id = R.string.label_users),
                         style = TextStyle(
                             fontSize = 20.sp,
                             color = Color.White,
@@ -74,14 +76,15 @@ fun UserScreen(navController: NavController, viewModel: UserViewModel = viewMode
                 .padding(it)
         ) {
             items(users?.size ?: 0) { index ->
-                UserItem(users?.get(index), onItemClick = { user->
+                UserItem(users?.get(index), onItemClick = { user ->
                     navController.navigate(
                         Screens.Messages(
                             contactId = "default",
                             receiverId = user?.id,
                             receiverName = user?.name
                         )
-                    )                })
+                    )
+                })
             }
         }
     }
@@ -100,9 +103,9 @@ fun UserItem(user: User?, onItemClick: (User?) -> Unit) {
                 onItemClick.invoke(user)
             }
     ) {
-        Column{
+        Column {
             Text(
-                text = user?.name?:"",
+                text = user?.name ?: "",
                 style = TextStyle(
                     fontSize = 18.sp
                 ),
