@@ -8,7 +8,6 @@ import com.example.langbridge.messages.data.models.MessageResponse
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.Parameters
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 class MessageRepositoryImpl : MessageRepository {

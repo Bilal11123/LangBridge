@@ -2,12 +2,10 @@ package com.example.langbridge.users.data.repository
 
 import com.example.langbridge.ApiEndpoints
 import com.example.langbridge.AppHttpClient
-import com.example.langbridge.contacts.data.models.ContactResponse
 import com.example.langbridge.users.data.models.UserResponse
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.Parameters
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 class UserRepositoryImpl: UserRepository {

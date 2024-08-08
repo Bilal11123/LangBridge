@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.langbridge.UserInfo
 import com.example.langbridge.users.data.models.User
-import com.example.langbridge.users.data.models.UserResponse
 import com.example.langbridge.users.data.repository.UserRepository
 import com.example.langbridge.users.data.repository.UserRepositoryImpl
 import kotlinx.coroutines.Dispatchers
