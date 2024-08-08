@@ -1,8 +1,8 @@
 package com.example.langbridge.messages.ui
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -10,19 +10,22 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -148,25 +151,39 @@ fun MessagesListView(it: PaddingValues, viewModel: MessageViewModel) {
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            TextField(
+            OutlinedTextField(
                 value = savedtext,
                 onValueChange = { savedtext = it },
-                modifier = Modifier.weight(0.8f)
+                modifier = Modifier.weight(0.8f),
+                shape = RoundedCornerShape(10.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = {
-                viewModel.sendNewMessage(savedtext)
-                savedtext = ""
-                keyboardController?.hide()
-            }) {
-                Box(
-                    modifier = Modifier.fillMaxWidth(0.2f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("Send")
-                }
+
+            IconButton(
+                modifier = Modifier.size(50.dp).background(
+                    shape = CircleShape,
+                    color = Color.Blue.copy(
+                        alpha = if (savedtext.isEmpty()) 0.3f else 1f
+                    )
+                ),
+
+                enabled = savedtext.isNotEmpty(),
+                onClick = {
+                    viewModel.sendNewMessage(savedtext)
+                    savedtext = ""
+                    keyboardController?.hide()
+                }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Send,
+                    contentDescription = "Send",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterVertically)
+                )
             }
         }
 
