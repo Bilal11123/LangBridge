@@ -1,10 +1,9 @@
 package com.example.langbridge.contacts.ui
 
-import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.os.LocaleListCompat
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.langbridge.UserInfo
 import com.example.langbridge.contacts.data.models.ContactResponse
@@ -14,7 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ContactViewModel(private val context: Application) : AndroidViewModel(context) {
+class ContactViewModel : ViewModel() {
 
     var name = mutableStateOf(UserInfo.name)
     private val repository: ContactRepository = ContactRepositoryImpl()
