@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -95,8 +96,8 @@ fun UserItem(user: User?, onItemClick: (User?) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .border(2.dp, Color.DarkGray)
+            .padding(vertical = 2.dp, horizontal = 1.dp)
+            .border(2.dp, Color.DarkGray, shape = RoundedCornerShape(8.dp))
             .background(Color.LightGray)
             .padding(8.dp)
             .clickable {

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -143,8 +144,8 @@ fun RadioButtonGroup(
 fun ContactItem(contact: Contact?, onItemClick: (Contact?) -> Unit) {
     Box(modifier = Modifier
         .fillMaxWidth()
-        .padding(vertical = 4.dp)
-        .border(2.dp, Color.DarkGray)
+        .padding(vertical = 2.dp, horizontal = 1.dp)
+        .border(2.dp, Color.DarkGray, shape = RoundedCornerShape(8.dp))
         .background(Color.LightGray)
         .padding(8.dp)
         .clickable {

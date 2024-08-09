@@ -1,8 +1,11 @@
 package com.example.langbridge.messages.ui
 
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -105,7 +109,7 @@ fun MessageScreen(
 
 @Composable
 fun MessagesListView(it: PaddingValues, viewModel: MessageViewModel) {
-    var savedtext by remember { mutableStateOf("") }
+    var savedText by remember { mutableStateOf("") }
     val messageList by viewModel.messageList
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -155,25 +159,27 @@ fun MessagesListView(it: PaddingValues, viewModel: MessageViewModel) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             OutlinedTextField(
-                value = savedtext,
-                onValueChange = { savedtext = it },
+                value = savedText,
+                onValueChange = { savedText = it },
                 modifier = Modifier.weight(0.8f),
                 shape = RoundedCornerShape(10.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
 
             IconButton(
-                modifier = Modifier.size(50.dp).background(
-                    shape = CircleShape,
-                    color = Color.Blue.copy(
-                        alpha = if (savedtext.isEmpty()) 0.3f else 1f
-                    )
-                ),
+                modifier = Modifier
+                    .size(50.dp)
+                    .background(
+                        shape = CircleShape,
+                        color = Color.Blue.copy(
+                            alpha = if (savedText.isEmpty()) 0.3f else 1f
+                        )
+                    ),
 
-                enabled = savedtext.isNotEmpty(),
+                enabled = savedText.isNotEmpty(),
                 onClick = {
-                    viewModel.sendNewMessage(savedtext)
-                    savedtext = ""
+                    viewModel.sendNewMessage(savedText)
+                    savedText = ""
                     keyboardController?.hide()
                 }) {
                 Icon(
@@ -192,20 +198,55 @@ fun MessagesListView(it: PaddingValues, viewModel: MessageViewModel) {
 
 @Composable
 fun SenderMessageView(message: Message?) {
-    Text(
-        text = message?.message ?: "",
-        textAlign = TextAlign.Start,
-        modifier = Modifier.fillMaxWidth(),
-        color = Color.Green
-    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(7.dp)
+
+    ) {
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .wrapContentSize(Alignment.TopStart)
+                .padding(start = 2.dp, end = 40.dp, top = 5.dp, bottom = 5.dp)
+                .border(
+                    border = BorderStroke(2.dp, Color.Black),
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .padding(10.dp)
+        ) {
+            Text(
+                text = message?.message ?: "",
+                textAlign = TextAlign.Start,
+                color = Color.Blue
+            )
+        }
+    }
 }
 
 @Composable
 fun ReceiverMessageView(message: Message?) {
-    Text(
-        text = message?.message ?: "",
-        textAlign = TextAlign.End,
-        modifier = Modifier.fillMaxWidth(),
-        color = Color.Red
-    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(7.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .wrapContentSize(Alignment.TopEnd)
+                .padding(start = 40.dp, end = 2.dp, top = 5.dp, bottom = 5.dp)
+                .border(
+                    border = BorderStroke(2.dp, Color.Black),
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .padding(10.dp)
+        ) {
+            Text(
+                text = message?.message ?: "",
+                textAlign = TextAlign.Start,
+                color = Color.Red
+            )
+        }
+    }
 }
