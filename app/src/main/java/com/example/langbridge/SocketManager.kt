@@ -23,7 +23,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 
 
-const val socketIp = "192.168.43.113"
+const val socketIp = "192.168.18.67"
 const val socketPort = 12344
 
 class SocketManager(context: Context) {

@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">郎桥</string>
     <string name="label_users">用户</string>
+    <string name="address_users">你好</string>
 </resources>

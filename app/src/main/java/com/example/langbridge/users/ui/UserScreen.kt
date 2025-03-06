@@ -1,40 +1,26 @@
 package com.example.langbridge.users.ui
 
-
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.langbridge.R
 import com.example.langbridge.Screens
 import com.example.langbridge.users.data.models.User
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,74 +31,112 @@ fun UserScreen(navController: NavController, viewModel: UserViewModel = viewMode
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            navController.navigateUp()
-                        }
-                    ) {
+                    IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Settings",
-                            tint = Color.White
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Blue),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
                 title = {
                     Text(
                         text = stringResource(id = R.string.label_users),
-                        style = TextStyle(
-                            fontSize = 20.sp,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        textAlign = TextAlign.Left
+                        style = MaterialTheme.typography.titleLarge
                     )
-                },
+                }
             )
         }
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .padding(it)
-        ) {
-            items(users?.size ?: 0) { index ->
-                UserItem(users?.get(index), onItemClick = { user ->
-                    navController.navigate(
-                        Screens.Messages(
-                            contactId = "default",
-                            receiverId = user?.id,
-                            receiverName = user?.name
-                        )
+    ) { paddingValues ->
+        if (users.isNullOrEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "No users found",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(users?.size ?: 0) { index ->
+                    UserItem(
+                        user = users?.get(index),
+                        onItemClick = { user ->
+                            navController.navigate(
+                                Screens.Messages(
+                                    contactId = "default",
+                                    receiverId = user?.id,
+                                    receiverName = user?.name
+                                )
+                            )
+                        }
                     )
-                })
+                }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserItem(user: User?, onItemClick: (User?) -> Unit) {
-    Box(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 2.dp, horizontal = 1.dp)
-            .border(2.dp, Color.DarkGray, shape = RoundedCornerShape(8.dp))
-            .background(Color.LightGray)
-            .padding(8.dp)
-            .clickable {
-                onItemClick.invoke(user)
-            }
+            .animateContentSize(),
+        onClick = { onItemClick(user) },
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Column {
-            Text(
-                text = user?.name ?: "",
-                style = TextStyle(
-                    fontSize = 18.sp
-                ),
-                textAlign = TextAlign.Left
-            )
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // User Avatar
+            Surface(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape),
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Text(
+                        text = user?.name?.firstOrNull()?.uppercase() ?: "?",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = user?.name ?: "",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.SemiBold
+                    )
+                )
+            }
         }
     }
 }
-

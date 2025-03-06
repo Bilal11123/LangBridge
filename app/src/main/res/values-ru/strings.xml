@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">ЛангБридж</string>
     <string name="label_users">Пользователи</string>
+    <string name="address_users">Привет</string>
 </resources>

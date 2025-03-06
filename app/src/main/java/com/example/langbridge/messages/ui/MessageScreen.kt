@@ -1,21 +1,7 @@
 package com.example.langbridge.messages.ui
 
-
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -24,37 +10,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.langbridge.Screens
 import com.example.langbridge.messages.data.models.Message
 import com.example.langbridge.messages.data.models.MessageType
 import kotlinx.coroutines.launch
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,151 +43,147 @@ fun MessageScreen(
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            navController.navigateUp()
-                        }
-                    ) {
+                    IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Settings",
-                            tint = Color.White
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Blue),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
                 title = {
                     Text(
                         text = message.receiverName ?: "",
-                        style = TextStyle(
-                            fontSize = 20.sp,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        textAlign = TextAlign.Left
+                        style = MaterialTheme.typography.titleLarge
                     )
-                },
+                }
             )
         }
-    ) {
-
-        MessagesListView(it, viewModel)
+    ) { paddingValues ->
+        MessagesListView(paddingValues, viewModel)
     }
-
 }
 
 @Composable
-fun MessagesListView(it: PaddingValues, viewModel: MessageViewModel) {
-    var savedText by remember { mutableStateOf("") }
+fun MessagesListView(paddingValues: PaddingValues, viewModel: MessageViewModel) {
+    var messageText by remember { mutableStateOf("") }
     val messageList by viewModel.messageList
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
+
     Column(
         modifier = Modifier
-            .imePadding()
-            .padding(it)
             .fillMaxWidth()
+            .imePadding()
+            .padding(paddingValues)
     ) {
-        LazyColumn(
-            state = listState,
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
                 .weight(1f)
+                .fillMaxWidth()
         ) {
-            messageList?.let { messages ->
-                items(messages) { message ->
-                    if (message?.getMessageType() == MessageType.SENDER) {
-                        ReceiverMessageView(message)
-                    } else {
-                        SenderMessageView(message)
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(vertical = 16.dp)
+            ) {
+                messageList?.let { messages ->
+                    items(messages) { message ->
+                        if (message?.getMessageType() == MessageType.SENDER) {
+                            ReceiverMessageView(message)
+                        } else {
+                            SenderMessageView(message)
+                        }
                     }
                 }
             }
         }
 
-        LaunchedEffect(key1 = false) {
-            coroutineScope.launch {
-                listState.scrollToItem(messageList?.size ?: 0)
-            }
-        }
-
+        // Auto-scroll to bottom on new messages
         LaunchedEffect(messageList) {
-            coroutineScope.launch {
-                listState.scrollToItem(messageList?.size ?: 0)
+            messageList?.size?.let { size ->
+                if (size > 0) {
+                    coroutineScope.launch {
+                        listState.scrollToItem(size - 1)
+                    }
+                }
             }
         }
 
-        //Message Entry Widget
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+        // Message Input Area
+        Surface(
+            tonalElevation = 2.dp,
+            color = MaterialTheme.colorScheme.surface
         ) {
-            OutlinedTextField(
-                value = savedText,
-                onValueChange = { savedText = it },
-                modifier = Modifier.weight(0.8f),
-                shape = RoundedCornerShape(10.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-
-            IconButton(
+            Row(
                 modifier = Modifier
-                    .size(50.dp)
-                    .background(
-                        shape = CircleShape,
-                        color = Color.Blue.copy(
-                            alpha = if (savedText.isEmpty()) 0.3f else 1f
-                        )
-                    ),
-
-                enabled = savedText.isNotEmpty(),
-                onClick = {
-                    viewModel.sendNewMessage(savedText)
-                    savedText = ""
-                    keyboardController?.hide()
-                }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Send,
-                    contentDescription = "Send",
-                    tint = Color.White,
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                TextField(
+                    value = messageText,
+                    onValueChange = { messageText = it },
                     modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.CenterVertically)
+                        .weight(1f)
+                        .clip(RoundedCornerShape(24.dp)),
+                    placeholder = { Text("Type a message") },
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    maxLines = 4
                 )
+
+                FloatingActionButton(
+                    onClick = {
+                        if (messageText.isNotEmpty()) {
+                            viewModel.sendNewMessage(messageText)
+                            messageText = ""
+                            keyboardController?.hide()
+                        }
+                    },
+                    modifier = Modifier.size(48.dp),
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Send,
+                        contentDescription = "Send message"
+                    )
+                }
             }
         }
-
     }
 }
 
 @Composable
 fun SenderMessageView(message: Message?) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(7.dp)
-
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Start
     ) {
-        Box(
+        Surface(
+            shape = RoundedCornerShape(16.dp, 16.dp, 16.dp, 4.dp),
+            color = MaterialTheme.colorScheme.primaryContainer,
             modifier = Modifier
-                .align(Alignment.TopStart)
-                .wrapContentSize(Alignment.TopStart)
-                .padding(start = 2.dp, end = 40.dp, top = 5.dp, bottom = 5.dp)
-                .border(
-                    border = BorderStroke(2.dp, Color.Black),
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .padding(10.dp)
+                .widthIn(0.dp, 280.dp)
+                .animateContentSize()
         ) {
             Text(
                 text = message?.message ?: "",
-                textAlign = TextAlign.Start,
-                color = Color.Blue
+                modifier = Modifier.padding(12.dp),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
     }
@@ -226,26 +191,22 @@ fun SenderMessageView(message: Message?) {
 
 @Composable
 fun ReceiverMessageView(message: Message?) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(7.dp)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End
     ) {
-        Box(
+        Surface(
+            shape = RoundedCornerShape(16.dp, 16.dp, 4.dp, 16.dp),
+            color = MaterialTheme.colorScheme.secondaryContainer,
             modifier = Modifier
-                .align(Alignment.TopEnd)
-                .wrapContentSize(Alignment.TopEnd)
-                .padding(start = 40.dp, end = 2.dp, top = 5.dp, bottom = 5.dp)
-                .border(
-                    border = BorderStroke(2.dp, Color.Black),
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .padding(10.dp)
+                .widthIn(0.dp, 280.dp)
+                .animateContentSize()
         ) {
             Text(
                 text = message?.message ?: "",
-                textAlign = TextAlign.Start,
-                color = Color.Red
+                modifier = Modifier.padding(12.dp),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
     }
