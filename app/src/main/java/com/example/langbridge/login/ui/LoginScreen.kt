@@ -24,7 +24,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navController: NavHostController, loginVM: LoginViewModel = viewModel()) {
+fun LoginScreen(
+    navController: NavHostController,
+    loginVM: LoginViewModel = viewModel(),
+    viewModel: GoogleSignInViewModel = viewModel()) {
     val email by loginVM.email
     val password by loginVM.password
     val message by loginVM.message
@@ -133,13 +136,20 @@ fun LoginScreen(navController: NavHostController, loginVM: LoginViewModel = view
 
                 // Sign Up Button
                 TextButton(
-                    onClick = { /* TODO */ },
+                    onClick = { viewModel.launchGoogleSignIn() },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "Don't have an account? Sign Up",
+                        text = "Login Using Google",
                         style = TextStyle(fontSize = 14.sp)
                     )
+                }
+                // Display user info after login
+                viewModel.userName?.let { name ->
+                    Text(text = "Welcome, $name!")
+                }
+                viewModel.userEmail?.let { email ->
+                    Text(text = "Email: $email")
                 }
             }
         }

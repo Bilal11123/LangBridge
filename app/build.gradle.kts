@@ -1,4 +1,6 @@
 plugins {
+//    id("com.android.application") // Or id("com.android.library")
+//    kotlin("android")
     kotlin("plugin.serialization") version "1.9.0"
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
