@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.langbridge.Screens
 import com.example.langbridge.UserInfo
 import kotlinx.coroutines.launch
 
@@ -26,8 +28,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(
     navController: NavHostController,
-    loginVM: LoginViewModel = viewModel(),
-    viewModel: GoogleSignInViewModel = viewModel()) {
+    loginVM: LoginViewModel = viewModel()
+    ) {
     val email by loginVM.email
     val password by loginVM.password
     val message by loginVM.message
@@ -136,7 +138,9 @@ fun LoginScreen(
 
                 // Sign Up Button
                 TextButton(
-                    onClick = { viewModel.launchGoogleSignIn() },
+                    onClick = { navController.navigate("sign_in")
+//                        viewModel.launchGoogleSignIn()
+                              },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
@@ -144,13 +148,13 @@ fun LoginScreen(
                         style = TextStyle(fontSize = 14.sp)
                     )
                 }
-                // Display user info after login
-                viewModel.userName?.let { name ->
-                    Text(text = "Welcome, $name!")
-                }
-                viewModel.userEmail?.let { email ->
-                    Text(text = "Email: $email")
-                }
+//                // Display user info after login
+//                viewModel.userName?.let { name ->
+//                    Text(text = "Welcome, $name!")
+//                }
+//                viewModel.userEmail?.let { email ->
+//                    Text(text = "Email: $email")
+//                }
             }
         }
 
