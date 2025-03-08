@@ -20,11 +20,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.langbridge.contacts.ui.ContactScreen
+import com.example.langbridge.login.data.models.UserData
+import com.example.langbridge.login.data.repository.GoogleAuthUiClient
 import com.example.langbridge.login.ui.LoginScreen
-import com.example.langbridge.loginWithGoogle.GoogleAuthUiClient
-import com.example.langbridge.loginWithGoogle.GoogleSignInScreen
-import com.example.langbridge.loginWithGoogle.ProfileScreen
-import com.example.langbridge.loginWithGoogle.SignInViewModel
+import com.example.langbridge.login.ui.LoginViewModel
 import com.example.langbridge.messages.ui.MessageScreen
 import com.example.langbridge.users.ui.UserScreen
 import com.google.android.gms.auth.api.identity.Identity
@@ -53,16 +52,14 @@ class MainActivity : AppCompatActivity() {
             val navController = rememberNavController()
 
             NavHost(navController = navController, startDestination = "login") {
-                composable("sign_in") {
-                    val viewModel = viewModel<SignInViewModel>()
+                composable("login") {
+                    val viewModel = viewModel<LoginViewModel>()
                     val state by viewModel.state.collectAsStateWithLifecycle()
-
                     val launcher = rememberLauncherForActivityResult(
                         contract = ActivityResultContracts.StartIntentSenderForResult(),
                         onResult = { result ->
                             if (result.resultCode == RESULT_OK){
                                 lifecycleScope.launch {
-
                                     val signInResult = googleAuthUiClient.getSignInResultFromIntent(
                                         intent = result.data ?: return@launch
                                     )
@@ -79,12 +76,15 @@ class MainActivity : AppCompatActivity() {
                                 "Google Sign in Successful",
                                 Toast.LENGTH_LONG
                             ).show()
-
-                            navController.navigate("profile")
+                            Toast.makeText(
+                                applicationContext,
+                                googleAuthUiClient.getSignedInUser()?.username ?: "unknown",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
 
-                    GoogleSignInScreen(
+                    LoginScreen(
                         state = state,
                         onGoogleSignInClick = {
                             lifecycleScope.launch {
@@ -95,22 +95,12 @@ class MainActivity : AppCompatActivity() {
                                     ).build()
                                 )
                             }
-                        }
+                        },
+                        googleAuthUiClient.getSignedInUser(),
+                        navController
+
                     )
-                }
-                composable("profile") {
-                    ProfileScreen(
-                        userData = googleAuthUiClient.getSignedInUser(),
-                        onSignOut = {
-                            lifecycleScope.launch {
-                                googleAuthUiClient.signOut()
-                                navController.popBackStack()
-                            }
-                        }
-                    )
-                }
-                composable("login") {
-                    LoginScreen(navController)
+//                    LoginScreen(navController)
                 }
                 composable("contacts") {
                     ContactScreen(navController)

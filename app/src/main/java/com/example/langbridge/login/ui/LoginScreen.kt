@@ -1,17 +1,20 @@
 package com.example.langbridge.login.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -22,14 +25,32 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.langbridge.Screens
 import com.example.langbridge.UserInfo
+import com.example.langbridge.login.data.models.SignInState
+import com.example.langbridge.login.data.models.UserData
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
+    state: SignInState,
+    onGoogleSignInClick: () -> Unit,
+    userData: UserData?,
     navController: NavHostController,
-    loginVM: LoginViewModel = viewModel()
+    loginVM: LoginViewModel = viewModel(),
     ) {
+
+    val context = LocalContext.current
+    LaunchedEffect(key1 = state.signInError) {
+        state.signInError?.let { error ->
+            Toast.makeText(
+                context,
+                error,
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+
     val email by loginVM.email
     val password by loginVM.password
     val message by loginVM.message
@@ -137,24 +158,28 @@ fun LoginScreen(
                 }
 
                 // Sign Up Button
-                TextButton(
-                    onClick = { navController.navigate("sign_in")
-//                        viewModel.launchGoogleSignIn()
-                              },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Login Using Google",
-                        style = TextStyle(fontSize = 14.sp)
-                    )
+//                TextButton(
+//                    onClick = { navController.navigate("sign_in")
+//                              },
+//                    modifier = Modifier.fillMaxWidth()
+//                ) {
+//                    Text(
+//                        text = "Login Using Google",
+//                        style = TextStyle(fontSize = 14.sp)
+//                    )
+//                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ){
+                    Button(onClick = onGoogleSignInClick) {
+                        Text(text = "Sign In With Google")
+                    }
                 }
-//                // Display user info after login
-//                viewModel.userName?.let { name ->
-//                    Text(text = "Welcome, $name!")
-//                }
-//                viewModel.userEmail?.let { email ->
-//                    Text(text = "Email: $email")
-//                }
+
             }
         }
 

@@ -1,27 +1,26 @@
-package com.example.langbridge.loginWithGoogle
+package com.example.langbridge.login.data.repository
 
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import com.example.langbridge.R
+import com.example.langbridge.login.data.models.SignInResult
+import com.example.langbridge.login.data.models.UserData
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
-import java.util.concurrent.CancellationException
 
-class GoogleAuthUiClient(
+class GoogleAuthUiClient (
     private val context: Context,
     private val oneTapClient: SignInClient,
     private val auth: FirebaseAuth
-) {
-
-//    private val auth = Firebase.auth
-
+)  {
     suspend fun signIn(): IntentSender? {
         val result = try {
             oneTapClient.beginSignIn(
@@ -35,7 +34,7 @@ class GoogleAuthUiClient(
         return result?.pendingIntent?.intentSender
     }
 
-    suspend fun getSignInResultFromIntent(intent: Intent): SignInResult{
+    suspend fun getSignInResultFromIntent(intent: Intent): SignInResult {
         val credential = oneTapClient.getSignInCredentialFromIntent(intent)
         val googleIdToken = credential.googleIdToken
         val googleCredentials = GoogleAuthProvider.getCredential(googleIdToken, null)
