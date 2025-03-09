@@ -19,6 +19,7 @@ const val port = "12344"
 
 object ApiEndpoints {
     const val LOGIN = "login/"
+    const val LOGIN_OAUTH = "login_oauth/"
     const val CONTACT_LIST = "contactlist/"
     const val LOGOUT = "logout/"
     const val MESSAGE_LIST = "messagelist/"

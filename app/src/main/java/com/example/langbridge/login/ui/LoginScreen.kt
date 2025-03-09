@@ -69,9 +69,8 @@ fun LoginScreen(
                 Toast.LENGTH_LONG
             ).show()
             coroutineScope.launch {
-                loginVM.login(
-                    googleAuthUiClient.getSignedInUser()?.userEmail ?: "unknown",
-                    "ashhad"
+                loginVM.login_oauth(
+                    googleAuthUiClient.getSignedInUser()?.userEmail.toString()
                 )
             }
 //                            coroutineScope.launch {

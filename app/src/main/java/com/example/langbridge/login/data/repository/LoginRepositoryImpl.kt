@@ -34,4 +34,25 @@ class LoginRepositoryImpl : LoginRepository {
         }
     }
 
+    override suspend fun login_oauth(email: String): LoginResponse {
+        return try {
+            val response: HttpResponse = httpClient.post(
+                ApiEndpoints.LOGIN_OAUTH,
+                Parameters.build {
+                    append("email", email)
+                })
+            val responseBody = response.bodyAsText()
+
+            // Attempt to parse JSON response
+            try {
+                Json.decodeFromString<LoginResponse>(responseBody)
+            } catch (e: Exception) {
+                // If parsing fails, treat the response as a plain text message
+                LoginResponse(status = "error", name = "Unknown")
+            }
+        } catch (e: Exception) {
+            LoginResponse(status = "error", name = "Unknown")
+        }
+    }
+
 }

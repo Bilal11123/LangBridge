@@ -50,6 +50,17 @@ class LoginViewModel : ViewModel() {
             }
         }
     }
+
+    fun login_oauth(email: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.login_oauth(email)
+            withContext(Dispatchers.Main) {
+                _loginResponse.value = response
+            }
+        }
+    }
+
+
     fun showError(errorMessage: String) {
         error.value = true
         message.value = errorMessage
