@@ -1,4 +1,4 @@
-package com.example.langbridge.loginWithGoogle
+package com.example.langbridge.login.data.models
 
 data class SignInResult(
     val data: UserData?,
@@ -8,5 +8,6 @@ data class SignInResult(
 data class UserData(
     val userId: String,
     val username: String?,
+    val userEmail: String?,
     val profilePictureUrl: String?
 )

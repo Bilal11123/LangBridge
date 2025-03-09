@@ -1,6 +1,7 @@
 package com.example.langbridge
 
 import android.app.Activity.RESULT_OK
+import androidx.compose.runtime.rememberCoroutineScope
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -20,13 +21,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.langbridge.contacts.ui.ContactScreen
+import com.example.langbridge.login.data.models.UserData
+import com.example.langbridge.login.data.repository.GoogleAuthUiClient
 import com.example.langbridge.login.ui.LoginScreen
-import com.example.langbridge.loginWithGoogle.GoogleAuthUiClient
-import com.example.langbridge.loginWithGoogle.GoogleSignInScreen
-import com.example.langbridge.loginWithGoogle.SignInViewModel
+import com.example.langbridge.login.ui.LoginViewModel
 import com.example.langbridge.messages.ui.MessageScreen
 import com.example.langbridge.users.ui.UserScreen
 import com.google.android.gms.auth.api.identity.Identity
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 
@@ -37,29 +39,29 @@ fun App() {
 
 
 class MainActivity : AppCompatActivity() {
+    private val auth by lazy { FirebaseAuth.getInstance() }
     private val googleAuthUiClient by lazy {
         GoogleAuthUiClient(
             context = applicationContext,
-            oneTapClient = Identity.getSignInClient(applicationContext)
+            oneTapClient = Identity.getSignInClient(applicationContext),
+            auth = auth
         )
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
 
-            NavHost(navController = navController, startDestination = "sign_in") {
-                composable("sign_in") {
-                    val viewModel = viewModel<SignInViewModel>()
+            NavHost(navController = navController, startDestination = "login") {
+                composable("login") {
+                    val coroutineScope = rememberCoroutineScope()
+                    val viewModel = viewModel<LoginViewModel>()
                     val state by viewModel.state.collectAsStateWithLifecycle()
-
                     val launcher = rememberLauncherForActivityResult(
                         contract = ActivityResultContracts.StartIntentSenderForResult(),
                         onResult = { result ->
                             if (result.resultCode == RESULT_OK){
                                 lifecycleScope.launch {
-
                                     val signInResult = googleAuthUiClient.getSignInResultFromIntent(
                                         intent = result.data ?: return@launch
                                     )
@@ -76,10 +78,19 @@ class MainActivity : AppCompatActivity() {
                                 "Google Sign in Successful",
                                 Toast.LENGTH_LONG
                             ).show()
+//                            Toast.makeText(
+//                                applicationContext,
+//                                googleAuthUiClient.getSignedInUser()?.userEmail ?: "unknown",
+//                                Toast.LENGTH_LONG
+//                            ).show()
+//                            coroutineScope.launch {
+//                                viewModel.login(googleAuthUiClient.getSignedInUser()?.userEmail ?: "unknown",
+//                                    password)
+//                            }
                         }
                     }
 
-                    GoogleSignInScreen(
+                    LoginScreen(
                         state = state,
                         onGoogleSignInClick = {
                             lifecycleScope.launch {
@@ -90,11 +101,11 @@ class MainActivity : AppCompatActivity() {
                                     ).build()
                                 )
                             }
-                        }
+                        },
+                        googleAuthUiClient,
+                        navController
                     )
-                }
-                composable("login") {
-                    LoginScreen(navController)
+//                    LoginScreen(navController)
                 }
                 composable("contacts") {
                     ContactScreen(navController)
@@ -112,4 +123,3 @@ class MainActivity : AppCompatActivity() {
 
     }
 }
-

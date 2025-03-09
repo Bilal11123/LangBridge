@@ -1,8 +1,11 @@
 plugins {
-    kotlin("plugin.serialization") version "1.9.0"
+//    id("com.android.application") // Or id("com.android.library")
+//    kotlin("android")
+    kotlin("plugin.serialization") version "2.1.0"
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-parcelize")
+    alias(libs.plugins.compose.compiler)
 
     // Add the Google services Gradle plugin
     id("com.google.gms.google-services")
@@ -44,9 +47,7 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -105,5 +106,15 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.play.services.auth)
+//    implementation("com.google.firebase:firebase-auth-ktx:22.1.2") // Instead of 23.2.0
+//    implementation(libs.play.services.auth.v2070) // Instead of latest
 
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.kotlin") {
+            useVersion("2.1.0")
+        }
+    }
 }

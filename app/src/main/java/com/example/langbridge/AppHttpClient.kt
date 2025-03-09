@@ -14,11 +14,12 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-const val ip = "192.168.18.67"
+const val ip = "192.168.2.125"
 const val port = "12344"
 
 object ApiEndpoints {
     const val LOGIN = "login/"
+    const val LOGIN_OAUTH = "login_oauth/"
     const val CONTACT_LIST = "contactlist/"
     const val LOGOUT = "logout/"
     const val MESSAGE_LIST = "messagelist/"

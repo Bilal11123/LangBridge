@@ -6,7 +6,7 @@ firebaseBom = "33.10.0"
 googleid = "1.1.1"
 material = "1.6.8"
 mongodb = "5.1.2"
-kotlin = "1.9.0"
+kotlin = "2.1.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -24,6 +24,7 @@ firebaseCrashlyticsBuildtools = "3.0.2"
 navigationCompose = "2.8.0-beta06"
 appcompat = "1.7.0"
 playServicesAuth = "21.3.0"
+playServicesAuthVersion = "20.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -60,7 +61,13 @@ mongodb-driver-sync = { module = "org.mongodb:mongodb-driver-sync", version.ref 
 bson = { module = "org.mongodb:bson", version.ref = "mongodb" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+play-services-auth-v2070 = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuthVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+#noinspection SimilarGradleDependency
+#org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+#
+## Add this line
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
