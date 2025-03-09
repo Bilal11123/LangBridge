@@ -21,12 +21,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.langbridge.Screens
 import com.example.langbridge.UserInfo
 import com.example.langbridge.login.data.models.SignInState
 import com.example.langbridge.login.data.models.UserData
+import com.example.langbridge.login.data.repository.GoogleAuthUiClient
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,7 +36,7 @@ import kotlinx.coroutines.launch
 fun LoginScreen(
     state: SignInState,
     onGoogleSignInClick: () -> Unit,
-    userData: UserData?,
+    googleAuthUiClient: GoogleAuthUiClient,
     navController: NavHostController,
     loginVM: LoginViewModel = viewModel(),
     ) {
@@ -57,6 +59,21 @@ fun LoginScreen(
     val error by loginVM.error
     val loginResponse by loginVM.loginResponse
     val coroutineScope = rememberCoroutineScope()
+    val state by loginVM.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = state.isSignInSuccessful) {
+        if (state.isSignInSuccessful){
+            Toast.makeText(
+                context,
+                googleAuthUiClient.getSignedInUser()?.userEmail ?: "unknown",
+                Toast.LENGTH_LONG
+            ).show()
+//                            coroutineScope.launch {
+//                                viewModel.login(googleAuthUiClient.getSignedInUser()?.userEmail ?: "unknown",
+//                                    password)
+//                            }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -158,16 +175,20 @@ fun LoginScreen(
                 }
 
                 // Sign Up Button
-//                TextButton(
-//                    onClick = { navController.navigate("sign_in")
-//                              },
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    Text(
-//                        text = "Login Using Google",
-//                        style = TextStyle(fontSize = 14.sp)
-//                    )
-//                }
+                TextButton(
+                    onClick = { Toast.makeText(
+                            context,
+                            googleAuthUiClient.getSignedInUser()?.username ?: "unknown",
+                            Toast.LENGTH_LONG
+                        ).show()
+                              },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Show Username",
+                        style = TextStyle(fontSize = 14.sp)
+                    )
+                }
 
                 Box(
                     modifier = Modifier
@@ -179,6 +200,22 @@ fun LoginScreen(
                         Text(text = "Sign In With Google")
                     }
                 }
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(16.dp),
+//                    contentAlignment = Alignment.Center
+//                ){
+//                    Button(onClick = {
+//                        Toast.makeText(
+//                            context,
+//                            googleAuthUiClient.getSignedInUser()?.username ?: "unknown",
+//                            Toast.LENGTH_LONG
+//                        ).show()
+//                    }) {
+//                        Text(text = "Show username")
+//                    }
+//                }
 
             }
         }

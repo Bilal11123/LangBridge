@@ -1,6 +1,7 @@
 package com.example.langbridge
 
 import android.app.Activity.RESULT_OK
+import androidx.compose.runtime.rememberCoroutineScope
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -53,6 +54,7 @@ class MainActivity : AppCompatActivity() {
 
             NavHost(navController = navController, startDestination = "login") {
                 composable("login") {
+                    val coroutineScope = rememberCoroutineScope()
                     val viewModel = viewModel<LoginViewModel>()
                     val state by viewModel.state.collectAsStateWithLifecycle()
                     val launcher = rememberLauncherForActivityResult(
@@ -76,11 +78,15 @@ class MainActivity : AppCompatActivity() {
                                 "Google Sign in Successful",
                                 Toast.LENGTH_LONG
                             ).show()
-                            Toast.makeText(
-                                applicationContext,
-                                googleAuthUiClient.getSignedInUser()?.username ?: "unknown",
-                                Toast.LENGTH_LONG
-                            ).show()
+//                            Toast.makeText(
+//                                applicationContext,
+//                                googleAuthUiClient.getSignedInUser()?.userEmail ?: "unknown",
+//                                Toast.LENGTH_LONG
+//                            ).show()
+//                            coroutineScope.launch {
+//                                viewModel.login(googleAuthUiClient.getSignedInUser()?.userEmail ?: "unknown",
+//                                    password)
+//                            }
                         }
                     }
 
@@ -96,9 +102,8 @@ class MainActivity : AppCompatActivity() {
                                 )
                             }
                         },
-                        googleAuthUiClient.getSignedInUser(),
+                        googleAuthUiClient,
                         navController
-
                     )
 //                    LoginScreen(navController)
                 }
