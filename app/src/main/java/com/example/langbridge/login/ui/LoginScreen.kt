@@ -68,6 +68,12 @@ fun LoginScreen(
                 googleAuthUiClient.getSignedInUser()?.userEmail ?: "unknown",
                 Toast.LENGTH_LONG
             ).show()
+            coroutineScope.launch {
+                loginVM.login(
+                    googleAuthUiClient.getSignedInUser()?.userEmail ?: "unknown",
+                    "ashhad"
+                )
+            }
 //                            coroutineScope.launch {
 //                                viewModel.login(googleAuthUiClient.getSignedInUser()?.userEmail ?: "unknown",
 //                                    password)
@@ -224,7 +230,11 @@ fun LoginScreen(
         loginResponse?.let {
             if (it.status == "success") {
                 UserInfo.id = it.id
-                UserInfo.name = it.name
+                if (state.isSignInSuccessful){
+                    UserInfo.email = googleAuthUiClient.getSignedInUser()?.userEmail
+                }else {
+                    UserInfo.email = email
+                }
                 UserInfo.email = email
                 UserInfo.language = it.language
                 navController.navigate("contacts") {
