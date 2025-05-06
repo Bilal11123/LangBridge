@@ -87,6 +87,8 @@ dependencies {
     implementation (libs.mongodb.driver.sync)
     testImplementation(kotlin("test"))
 
+
+
     // Import the Firebase BoM
     implementation(platform(libs.firebase.bom))
 
@@ -106,6 +108,9 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.play.services.auth)
+    implementation(libs.generativeai)
+    implementation(libs.material.icons.extended)
+
 //    implementation("com.google.firebase:firebase-auth-ktx:22.1.2") // Instead of 23.2.0
 //    implementation(libs.play.services.auth.v2070) // Instead of latest
 

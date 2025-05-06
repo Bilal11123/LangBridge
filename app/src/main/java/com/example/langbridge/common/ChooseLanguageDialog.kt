@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -16,7 +17,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.langbridge.UserInfo
 import com.example.langbridge.contacts.ui.RadioButtonGroup
@@ -26,24 +26,28 @@ import com.example.langbridge.contacts.ui.RadioButtonGroup
 fun ChooseLanguageDialog(onDialogDismiss: (String?) -> Unit = {}) {
     val languages = mapOf(
         "en" to "English",
-        "ru" to "Russian",
-        "zh" to "Chinese"
+        "ru" to "Русский",
+        "zh" to "中国人",
+        "fr" to "Français"
     )
     var selectedOption by remember { mutableStateOf(UserInfo.language) }
 
-    Dialog(onDismissRequest = { onDialogDismiss.invoke(selectedOption) }) {
-        // Customize your dialog content here
+    Dialog(onDismissRequest = { onDialogDismiss(selectedOption) }) {
         Surface(
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(16.dp),
+            tonalElevation = 8.dp,
+            modifier = Modifier.padding(20.dp)
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text(
-                    "Settings",
-                    fontSize = 20.sp,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(20.dp)
+                    text = "Choose Language",
+                    style = MaterialTheme.typography.titleLarge
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 RadioButtonGroup(
                     options = languages,
@@ -51,12 +55,10 @@ fun ChooseLanguageDialog(onDialogDismiss: (String?) -> Unit = {}) {
                     onOptionSelected = { selectedOption = it }
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
                 TextButton(
-                    onClick = {
-                        onDialogDismiss.invoke(selectedOption)
-                    },
+                    onClick = { onDialogDismiss(selectedOption) },
                     modifier = Modifier.align(Alignment.End)
                 ) {
                     Text("OK")
@@ -65,3 +67,4 @@ fun ChooseLanguageDialog(onDialogDismiss: (String?) -> Unit = {}) {
         }
     }
 }
+

@@ -38,7 +38,12 @@ class LoginViewModel : ViewModel() {
     var message = mutableStateOf("")
     var email = mutableStateOf("ashhad@gmail.com")
     var password = mutableStateOf("ashhad")
-    private val repository: LoginRepository by lazy { LoginRepositoryImpl() }
+    var repository: LoginRepository = LoginRepositoryImpl()
+        private set
+
+    fun rebuildRepository() {
+        repository = LoginRepositoryImpl()
+    }
     private val _loginResponse = mutableStateOf<LoginResponse?>(null)
     val loginResponse: State<LoginResponse?> = _loginResponse
 
@@ -51,9 +56,9 @@ class LoginViewModel : ViewModel() {
         }
     }
 
-    fun login_oauth(email: String){
+    fun login_oauth(email: String, name: String){
         viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.login_oauth(email)
+            val response = repository.login_oauth(email, name)
             withContext(Dispatchers.Main) {
                 _loginResponse.value = response
             }

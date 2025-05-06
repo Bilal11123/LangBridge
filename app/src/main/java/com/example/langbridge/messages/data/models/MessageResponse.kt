@@ -9,7 +9,10 @@ data class Message(
     @SerialName("id") val id: String?,
     @SerialName("message") val message: String?,
     @SerialName("sender_id") val senderId: String?,
-    @SerialName("locale") val locale: String?
+    @SerialName("locale") val locale: String?,
+    @SerialName("is_voice_message") val isVoiceMessage: Boolean = false,
+    @SerialName("audio_content") val audioContent: String? = null,
+    @SerialName("duration_seconds") val durationSeconds: Int? = null
 ) {
     fun getMessageType(): MessageType {
         return if (senderId == UserInfo.id) {

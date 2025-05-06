@@ -3,4 +3,9 @@
     <string name="app_name">ЛангБридж</string>
     <string name="label_users">Пользователи</string>
     <string name="address_users">Привет</string>
+    <string name="chat_bot">Глобальный чат</string>
+    <string name="voice_note_start">Запись......</string>
+    <string name="type_message">Введите сообщение</string>
+    <string name="chatbot_placeholder">Спроси меня о чём угодно</string>
+    <string name="chatbot_header">Чат-бот</string>
 </resources>

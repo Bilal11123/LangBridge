@@ -3,4 +3,9 @@
     <string name="app_name">郎桥</string>
     <string name="label_users">用户</string>
     <string name="address_users">你好</string>
+    <string name="chat_bot">全球聊天</string>
+    <string name="voice_note_start">记录......</string>
+    <string name="type_message">输入消息</string>
+    <string name="chatbot_placeholder">有什么问题就问我</string>
+    <string name="chatbot_header">聊天机器人</string>
 </resources>
