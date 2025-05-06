@@ -6,4 +6,5 @@ object UserInfo {
     var email: String? = ""
     var id: String? = ""
     var language: String? = ""
+    var user_type: String? = ""
 }

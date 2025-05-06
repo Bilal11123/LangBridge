@@ -5,15 +5,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode.Companion.Screen
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -24,10 +27,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.langbridge.Screens
 import com.example.langbridge.UserInfo
+import com.example.langbridge.common.ChangeIPDialog
 import com.example.langbridge.login.data.models.SignInState
-import com.example.langbridge.login.data.models.UserData
 import com.example.langbridge.login.data.repository.GoogleAuthUiClient
 import kotlinx.coroutines.launch
 
@@ -39,88 +41,85 @@ fun LoginScreen(
     googleAuthUiClient: GoogleAuthUiClient,
     navController: NavHostController,
     loginVM: LoginViewModel = viewModel(),
-    ) {
-
+) {
     val context = LocalContext.current
-    LaunchedEffect(key1 = state.signInError) {
-        state.signInError?.let { error ->
-            Toast.makeText(
-                context,
-                error,
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-
+    val coroutineScope = rememberCoroutineScope()
 
     val email by loginVM.email
     val password by loginVM.password
     val message by loginVM.message
     val error by loginVM.error
     val loginResponse by loginVM.loginResponse
-    val coroutineScope = rememberCoroutineScope()
-    val state by loginVM.state.collectAsStateWithLifecycle()
+    val signInState by loginVM.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(key1 = state.isSignInSuccessful) {
-        if (state.isSignInSuccessful){
-            Toast.makeText(
-                context,
-                googleAuthUiClient.getSignedInUser()?.userEmail ?: "unknown",
-                Toast.LENGTH_LONG
-            ).show()
+    var showDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state.signInError) {
+        state.signInError?.let { Toast.makeText(context, it, Toast.LENGTH_LONG).show() }
+    }
+
+    LaunchedEffect(signInState.isSignInSuccessful) {
+        if (signInState.isSignInSuccessful) {
+            Toast.makeText(context, googleAuthUiClient.getSignedInUser()?.userEmail ?: "unknown", Toast.LENGTH_LONG).show()
             coroutineScope.launch {
                 loginVM.login_oauth(
-                    googleAuthUiClient.getSignedInUser()?.userEmail.toString()
+                    googleAuthUiClient.getSignedInUser()?.userEmail.orEmpty(),
+                    googleAuthUiClient.getSignedInUser()?.username.orEmpty()
                 )
             }
-//                            coroutineScope.launch {
-//                                viewModel.login(googleAuthUiClient.getSignedInUser()?.userEmail ?: "unknown",
-//                                    password)
-//                            }
         }
     }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
+            .padding(16.dp)
     ) {
+        // Settings Icon
+        IconButton(
+            onClick = { showDialog = true },
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(4.dp)
+        ) {
+            Icon(Icons.Default.Settings, contentDescription = "Settings")
+        }
+
+        // IP Dialog
+        if (showDialog) {
+            ChangeIPDialog(
+                onDismiss = { showDialog = false },
+                onIpEntered = {
+                    com.example.langbridge.ip = it
+                    com.example.langbridge.socketIp = it
+                    loginVM.rebuildRepository()
+                }
+            )
+        }
+
+        // Login Card
         Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                .align(Alignment.Center)
+                .padding(horizontal = 24.dp),
+            shape = RoundedCornerShape(24.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                    .padding(32.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Logo or App Name
+                Text("LangBridge", style = MaterialTheme.typography.headlineLarge)
                 Text(
-                    text = "LangBridge",
-                    style = TextStyle(
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                    "Welcome Back",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 )
 
-                Text(
-                    text = "Welcome Back",
-                    style = TextStyle(
-                        fontSize = 20.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Email TextField
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = email,
@@ -128,10 +127,9 @@ fun LoginScreen(
                     label = { Text("Email") },
                     isError = error,
                     singleLine = true,
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(16.dp)
                 )
 
-                // Password TextField
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = password,
@@ -141,28 +139,21 @@ fun LoginScreen(
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = {
-                        // Handle keyboard done action
-                    }),
-                    shape = RoundedCornerShape(12.dp)
+                    keyboardActions = KeyboardActions(onDone = {}),
+                    shape = RoundedCornerShape(16.dp)
                 )
 
                 if (error) {
                     Text(
-                        text = message,
+                        message,
                         color = MaterialTheme.colorScheme.error,
-                        style = TextStyle(fontSize = 14.sp)
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Login Button
                 Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
                     onClick = {
+                        loginVM.resetStates()
                         if (email.isBlank() || password.isBlank()) {
                             loginVM.showError("Email and Password cannot be empty")
                         } else {
@@ -171,74 +162,52 @@ fun LoginScreen(
                             }
                         }
                     },
-                    shape = RoundedCornerShape(12.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(16.dp)
                 ) {
-                    Text(
-                        text = "Login",
-                        style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                    )
+                    Text("Login", style = MaterialTheme.typography.titleMedium)
                 }
 
-                // Sign Up Button
                 TextButton(
-                    onClick = { Toast.makeText(
-                            context,
-                            googleAuthUiClient.getSignedInUser()?.username ?: "unknown",
-                            Toast.LENGTH_LONG
-                        ).show()
-                              },
+                    onClick = { navController.navigate("admin_login") },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(
-                        text = "Show Username",
-                        style = TextStyle(fontSize = 14.sp)
-                    )
+                    Text("Admin Login")
                 }
 
-                Box(
+                TextButton(
+                    onClick = { navController.navigate("signup") },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Sign Up", style = MaterialTheme.typography.bodyMedium)
+                }
+
+                OutlinedButton(
+                    onClick = onGoogleSignInClick,
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ){
-                    Button(onClick = onGoogleSignInClick) {
-                        Text(text = "Sign In With Google")
-                    }
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text("Sign In With Google")
                 }
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .padding(16.dp),
-//                    contentAlignment = Alignment.Center
-//                ){
-//                    Button(onClick = {
-//                        Toast.makeText(
-//                            context,
-//                            googleAuthUiClient.getSignedInUser()?.username ?: "unknown",
-//                            Toast.LENGTH_LONG
-//                        ).show()
-//                    }) {
-//                        Text(text = "Show username")
-//                    }
-//                }
-
             }
         }
 
-        // Handle login response
         loginResponse?.let {
             if (it.status == "success") {
                 UserInfo.id = it.id
-                if (state.isSignInSuccessful){
-                    UserInfo.email = googleAuthUiClient.getSignedInUser()?.userEmail
-                }else {
-                    UserInfo.email = email
-                }
-                UserInfo.email = email
+                UserInfo.email = googleAuthUiClient.getSignedInUser()?.userEmail ?: email
+                UserInfo.name = googleAuthUiClient.getSignedInUser()?.username ?: it.name
                 UserInfo.language = it.language
+                UserInfo.user_type = it.user_type
+
                 navController.navigate("contacts") {
                     popUpTo("login") { inclusive = true }
                 }
+
                 loginVM.resetStates()
             } else {
                 loginVM.resetLoginResponse()
@@ -247,3 +216,4 @@ fun LoginScreen(
         }
     }
 }
+

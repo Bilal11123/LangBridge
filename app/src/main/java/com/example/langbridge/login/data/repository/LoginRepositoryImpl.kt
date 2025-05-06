@@ -34,12 +34,13 @@ class LoginRepositoryImpl : LoginRepository {
         }
     }
 
-    override suspend fun login_oauth(email: String): LoginResponse {
+    override suspend fun login_oauth(email: String, name: String): LoginResponse {
         return try {
             val response: HttpResponse = httpClient.post(
                 ApiEndpoints.LOGIN_OAUTH,
                 Parameters.build {
                     append("email", email)
+                    append("name", name)
                 })
             val responseBody = response.bodyAsText()
 

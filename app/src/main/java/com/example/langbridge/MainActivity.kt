@@ -1,18 +1,16 @@
 package com.example.langbridge
 
-import android.app.Activity.RESULT_OK
-import androidx.compose.runtime.rememberCoroutineScope
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.IntentSenderRequest
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -20,22 +18,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.example.langbridge.admin_dashboard.ui.AdminDashboardScreen
+import com.example.langbridge.admin_login.ui.AdminLoginScreen
+import com.example.langbridge.chatbot.ChatPage
 import com.example.langbridge.contacts.ui.ContactScreen
-import com.example.langbridge.login.data.models.UserData
 import com.example.langbridge.login.data.repository.GoogleAuthUiClient
 import com.example.langbridge.login.ui.LoginScreen
 import com.example.langbridge.login.ui.LoginViewModel
 import com.example.langbridge.messages.ui.MessageScreen
+import com.example.langbridge.signup.ui.SignupScreen
 import com.example.langbridge.users.ui.UserScreen
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
-
-@Composable
-fun App() {
-
-}
 
 
 class MainActivity : AppCompatActivity() {
@@ -54,7 +50,6 @@ class MainActivity : AppCompatActivity() {
 
             NavHost(navController = navController, startDestination = "login") {
                 composable("login") {
-                    val coroutineScope = rememberCoroutineScope()
                     val viewModel = viewModel<LoginViewModel>()
                     val state by viewModel.state.collectAsStateWithLifecycle()
                     val launcher = rememberLauncherForActivityResult(
@@ -117,6 +112,19 @@ class MainActivity : AppCompatActivity() {
                     val message = it.toRoute<Screens.Messages>()
                     MessageScreen(navController, message)
                 }
+                composable("chatbot") {
+                    ChatPage(modifier = Modifier.padding(),navController)
+                }
+                composable("signup") {
+                    SignupScreen(navController)
+                }
+                composable("admin_login"){
+                    AdminLoginScreen(navController)
+                }
+                composable("admin_dashboard") {
+                    AdminDashboardScreen(navController)
+                }
+
             }
         }
 

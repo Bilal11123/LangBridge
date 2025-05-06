@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Pont Lang</string>
+    <string name="label_users">Utilisatrices</string>
+    <string name="address_users">Bonjour</string>
+    <string name="chat_bot">Chat mondial</string>
+    <string name="voice_note_start">Enregistrement......</string>
+    <string name="type_message">Tapez un message</string>
+    <string name="chatbot_placeholder">Demande-moi ne importe quoi</string>
+    <string name="chatbot_header">Bot de discussion</string>
+</resources>

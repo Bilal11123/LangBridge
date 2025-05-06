@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.langbridge.Screens
 import com.example.langbridge.SocketManager
 import com.example.langbridge.UserInfo
+import com.example.langbridge.messages.data.models.AudioRecorder
 import com.example.langbridge.messages.data.models.Message
 import com.example.langbridge.messages.data.models.SocketMessage
 import com.example.langbridge.messages.data.repository.MessageRepository
@@ -24,6 +25,11 @@ class MessageViewModel(context: Application) : AndroidViewModel(context) {
     private var conversationId: String? = "default"
     private var receiverId: String? = "default"
     private val socketManager: SocketManager by lazy { SocketManager(context) }
+    private val audioRecorder = AudioRecorder(context)
+
+    var isRecording = mutableStateOf(false)
+        private set
+
 
     fun setArgs(messages: Screens.Messages) {
         this.conversationId = messages.contactId
@@ -107,6 +113,63 @@ class MessageViewModel(context: Application) : AndroidViewModel(context) {
         super.onCleared()
         socketManager.unregisterConnectivityManager()
         stopListening()
+    }
+
+    fun startRecording() {
+        isRecording.value = true
+        audioRecorder.startRecording()
+    }
+
+    fun stopAndSendRecording() {
+        val recordingResult = audioRecorder.stopRecording()
+        isRecording.value = false
+        recordingResult?.let {
+            sendAudioMessage(it.base64Audio, it.durationSeconds)
+        }
+    }
+
+    private fun sendAudioMessage(base64Audio: String, durationSeconds: Int) {
+        val message = Message(
+            id = ObjectId().toHexString(),
+            message = "Voice Message",
+            senderId = UserInfo.id,
+            locale = UserInfo.language,
+            isVoiceMessage = true,
+            audioContent = base64Audio,
+            durationSeconds = durationSeconds
+        )
+
+        val socketMessage = SocketMessage(
+            message = message,
+            conversationId = conversationId
+        )
+
+        messageList.value = messageList.value?.plus(message)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            socketManager.sendMessage(socketMessage)
+        }
+    }
+
+    fun sendNewTextMessage(text: String) {
+        val message = Message(
+            id = ObjectId().toHexString(),
+            message = text,
+            senderId = UserInfo.id,
+            locale = UserInfo.language,
+            isVoiceMessage = false
+        )
+
+        val socketMessage = SocketMessage(
+            message = message,
+            conversationId = conversationId
+        )
+
+        messageList.value = messageList.value?.plus(message)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            socketManager.sendMessage(socketMessage)
+        }
     }
 
 }

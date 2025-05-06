@@ -2,5 +2,10 @@
     <string name="app_name">LangBridge</string>
     <string name="label_users">Users</string>
     <string name="address_users">Hello</string>
+    <string name="chat_bot">Global Chat</string>
+    <string name="voice_note_start">Recording.......</string>
+    <string name="type_message">Type a message</string>
+    <string name="chatbot_placeholder">Ask me anything</string>
+    <string name="chatbot_header">Chatbot</string>
     <string name="web_client_id" translatable="false">69747386689-5m4kbu3paurgbnr56o772521gn74ogkv.apps.googleusercontent.com</string>
 </resources>

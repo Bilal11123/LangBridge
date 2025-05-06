@@ -20,7 +20,7 @@
             </Target>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Ashhad\.android\avd\Medium_Phone_API_35.avd" />
+                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Ashhad\.android\avd\Pixel_9_Pro.avd" />
               </handle>
             </Target>
           </targets>
