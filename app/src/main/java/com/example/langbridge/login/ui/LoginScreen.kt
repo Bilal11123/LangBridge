@@ -18,12 +18,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -200,7 +197,7 @@ fun LoginScreen(
             if (it.status == "success") {
                 UserInfo.id = it.id
                 UserInfo.email = googleAuthUiClient.getSignedInUser()?.userEmail ?: email
-                UserInfo.name = googleAuthUiClient.getSignedInUser()?.username ?: it.name
+                UserInfo.name.value = googleAuthUiClient.getSignedInUser()?.username ?: it.name
                 UserInfo.language = it.language
                 UserInfo.user_type = it.user_type
 
@@ -211,9 +208,8 @@ fun LoginScreen(
                 loginVM.resetStates()
             } else {
                 loginVM.resetLoginResponse()
-                loginVM.showError("Invalid Credentials")
+                loginVM.showError("A problem has occurred, try again.")
             }
         }
     }
 }
-

@@ -9,8 +9,8 @@ import kotlinx.coroutines.launch
 
 class AdminLoginViewModel : ViewModel() {
 
-    val email = mutableStateOf("abc@gmail.com")
-    val password = mutableStateOf("123")
+    val email = mutableStateOf("")
+    val password = mutableStateOf("")
     val loginResponse = mutableStateOf<LoginResponse?>(null)
     val error = mutableStateOf(false)
     val message = mutableStateOf("")

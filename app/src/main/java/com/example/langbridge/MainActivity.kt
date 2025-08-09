@@ -26,7 +26,9 @@ import com.example.langbridge.login.data.repository.GoogleAuthUiClient
 import com.example.langbridge.login.ui.LoginScreen
 import com.example.langbridge.login.ui.LoginViewModel
 import com.example.langbridge.messages.ui.MessageScreen
+import com.example.langbridge.settings.ui.SettingsScreen
 import com.example.langbridge.signup.ui.SignupScreen
+import com.example.langbridge.splash_screen.SplashScreen
 import com.example.langbridge.users.ui.UserScreen
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.auth.FirebaseAuth
@@ -48,7 +50,10 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val navController = rememberNavController()
 
-            NavHost(navController = navController, startDestination = "login") {
+            NavHost(navController = navController, startDestination = "splash_screen") {
+                composable("splash_screen"){
+                    SplashScreen(navController)
+                }
                 composable("login") {
                     val viewModel = viewModel<LoginViewModel>()
                     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -123,6 +128,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable("admin_dashboard") {
                     AdminDashboardScreen(navController)
+                }
+                composable("settings_screen"){
+                    SettingsScreen(navController)
                 }
 
             }

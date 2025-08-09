@@ -13,12 +13,13 @@ import kotlinx.serialization.json.Json
 class MessageRepositoryImpl : MessageRepository {
     private val httpClient = AppHttpClient()
 
-    override suspend fun getMessageList(id: String?): MessageResponse {
+    override suspend fun getMessageList(id: String?, user_id: String?): MessageResponse {
         return try {
 
             val response: HttpResponse =
                 httpClient.post(ApiEndpoints.MESSAGE_LIST, Parameters.build {
                     append("id", id ?: "")
+                    append("user_id", user_id ?: "")
 
                 })
 

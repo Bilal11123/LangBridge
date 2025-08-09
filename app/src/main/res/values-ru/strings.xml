@@ -8,4 +8,14 @@
     <string name="type_message">Введите сообщение</string>
     <string name="chatbot_placeholder">Спроси меня о чём угодно</string>
     <string name="chatbot_header">Чат-бот</string>
+    <string name="settings_header">Настройки</string>
+    <string name="settings_change_name">Изменить имя</string>
+    <string name="settings_name_placeholder">Введите новое имя</string>
+    <string name="settings_change_password">Изменить пароль</string>
+    <string name="settings_password_placeholder">Введите новый пароль</string>
+    <string name="submit_button">хорошо</string>
+    <string name="settings_change_Language">Изменить язык</string>
+    <string name="settings_language_placeholder">Выберите язык</string>
+    <string name="settings_language_button">Сохранить язык</string>
+    <string name="Logout_button">Выход из системы</string>
 </resources>

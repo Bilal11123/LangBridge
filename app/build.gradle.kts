@@ -28,9 +28,20 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("C:\\My Files\\Code\\LangBridge\\Keystores\\Key0.jks")
+            storePassword = "edith123"
+            keyAlias = "key0"
+            keyPassword = "edith123"
+        }
+    }
+
+
     buildTypes {
         release {
             isMinifyEnabled = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -85,7 +96,9 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation (libs.bson)
     implementation (libs.mongodb.driver.sync)
+
     testImplementation(kotlin("test"))
+
 
 
 
