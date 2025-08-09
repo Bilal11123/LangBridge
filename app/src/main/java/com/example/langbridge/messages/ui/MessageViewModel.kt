@@ -71,7 +71,7 @@ class MessageViewModel(context: Application) : AndroidViewModel(context) {
             return
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = repository.getMessageList(conversationId)
+                val response = repository.getMessageList(conversationId, UserInfo.id)
                 withContext(Dispatchers.Main) {
                     messageList.value = response.messages
                 }

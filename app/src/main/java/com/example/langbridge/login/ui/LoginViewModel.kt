@@ -36,8 +36,8 @@ class LoginViewModel : ViewModel() {
     var name = mutableStateOf("")
     var error = mutableStateOf(false)
     var message = mutableStateOf("")
-    var email = mutableStateOf("ashhad@gmail.com")
-    var password = mutableStateOf("ashhad")
+    var email = mutableStateOf("")
+    var password = mutableStateOf("")
     var repository: LoginRepository = LoginRepositoryImpl()
         private set
 

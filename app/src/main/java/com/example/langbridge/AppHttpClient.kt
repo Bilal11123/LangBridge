@@ -14,7 +14,7 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-var ip = "192.168.18.67"
+var ip = "192.168.43.113"
 const val port = "12344"
 
 object ApiEndpoints {
@@ -29,6 +29,8 @@ object ApiEndpoints {
     const val CHANGE_LANGUAGE = "changelanguage/"
     const val SIGNUP = "signup/"
     const val ADMIN_USER_INTERACTIONS = "admin_user_interactions/"
+    const val CHANGE_NAME = "change_name/"
+    const val CHANGE_PASSWORD = "change_password/"
 
 }
 

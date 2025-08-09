@@ -1,8 +1,10 @@
 package com.example.langbridge
 
+import androidx.compose.runtime.mutableStateOf
+
 
 object UserInfo {
-    var name: String? = ""
+    var name = mutableStateOf<String?>("")
     var email: String? = ""
     var id: String? = ""
     var language: String? = ""

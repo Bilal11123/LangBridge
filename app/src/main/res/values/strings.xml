@@ -7,5 +7,15 @@
     <string name="type_message">Type a message</string>
     <string name="chatbot_placeholder">Ask me anything</string>
     <string name="chatbot_header">Chatbot</string>
+    <string name="settings_header">Settings</string>
+    <string name="settings_change_name">Change Name</string>
+    <string name="settings_name_placeholder">Enter new name</string>
+    <string name="settings_change_password">Change Password</string>
+    <string name="settings_password_placeholder">Enter new Password</string>
+    <string name="submit_button">Submit</string>
+    <string name="settings_change_Language">Change Language</string>
+    <string name="settings_language_placeholder">Select Language</string>
+    <string name="settings_language_button">Save Language</string>
+    <string name="Logout_button">Logout</string>
     <string name="web_client_id" translatable="false">69747386689-5m4kbu3paurgbnr56o772521gn74ogkv.apps.googleusercontent.com</string>
 </resources>

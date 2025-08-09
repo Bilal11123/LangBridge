@@ -8,4 +8,14 @@
     <string name="type_message">输入消息</string>
     <string name="chatbot_placeholder">有什么问题就问我</string>
     <string name="chatbot_header">聊天机器人</string>
+    <string name="settings_header">设置</string>
+    <string name="settings_change_name">更改姓名</string>
+    <string name="settings_name_placeholder">输入新名称</string>
+    <string name="settings_change_password">更改密码</string>
+    <string name="settings_password_placeholder">输入新密码</string>
+    <string name="submit_button">提交</string>
+    <string name="settings_change_Language">更改语言</string>
+    <string name="settings_language_placeholder">选择语言</string>
+    <string name="settings_language_button">保存语言</string>
+    <string name="Logout_button">退出</string>
 </resources>

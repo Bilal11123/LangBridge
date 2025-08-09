@@ -1,5 +1,3 @@
-// FULL MODERNIZED MESSAGE SCREEN UI
-
 package com.example.langbridge.messages.ui
 
 import android.Manifest
@@ -240,42 +238,54 @@ fun VoiceMessageView(message: Message) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = if (message.getMessageType() == MessageType.SENDER) Arrangement.End else Arrangement.Start
     ) {
-        Surface(
-            shape = RoundedCornerShape(20.dp),
-            color = MaterialTheme.colorScheme.primaryContainer,
-            modifier = Modifier
-                .widthIn(0.dp, 280.dp)
-                .animateContentSize()
-                .padding(8.dp)
-        ) {
-            Row(
-                modifier = Modifier.padding(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+        Column(horizontalAlignment = if (message.getMessageType() == MessageType.SENDER) Alignment.End else Alignment.Start){
+            Surface(
+                shape = RoundedCornerShape(20.dp),
+                color = MaterialTheme.colorScheme.primaryContainer,
+                modifier = Modifier
+                    .widthIn(0.dp, 280.dp)
+                    .animateContentSize()
+                    .padding(8.dp)
             ) {
-                IconButton(onClick = {
-                    if (!isPlaying.value) {
-                        mediaPlayer.reset()
-                        mediaPlayer.setDataSource(tempFile.absolutePath)
-                        mediaPlayer.prepare()
-                        mediaPlayer.start()
-                        isPlaying.value = true
-                        mediaPlayer.setOnCompletionListener { isPlaying.value = false }
-                    } else {
-                        mediaPlayer.stop()
-                        isPlaying.value = false
+                Row(
+                    modifier = Modifier.padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    IconButton(onClick = {
+                        if (!isPlaying.value) {
+                            mediaPlayer.reset()
+                            mediaPlayer.setDataSource(tempFile.absolutePath)
+                            mediaPlayer.prepare()
+                            mediaPlayer.start()
+                            isPlaying.value = true
+                            mediaPlayer.setOnCompletionListener { isPlaying.value = false }
+                        } else {
+                            mediaPlayer.stop()
+                            isPlaying.value = false
+                        }
+                    }) {
+                        Icon(
+                            imageVector = if (isPlaying.value) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+                            contentDescription = "Play/Pause"
+                        )
                     }
-                }) {
-                    Icon(
-                        imageVector = if (isPlaying.value) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-                        contentDescription = "Play/Pause"
-                    )
+                    Text("${message.durationSeconds ?: 0} sec")
+                    Spacer(Modifier.weight(1f))
+                    FakeWaveform()
                 }
-                Text("${message.durationSeconds ?: 0} sec")
-                Spacer(Modifier.weight(1f))
-                FakeWaveform()
+            }
+            if (message?.bleuScore != null && message.getMessageType() == MessageType.RECEIVER) {
+                Text(
+                    text = "BLEU Score: ${"%.2f".format(message.bleuScore)}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    modifier = Modifier
+                        .padding(top = 4.dp, end = 8.dp)
+                )
             }
         }
+
     }
 }
 
@@ -297,23 +307,90 @@ fun FakeWaveform() {
 @Composable
 fun SenderMessageView(message: Message?) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp),
         horizontalArrangement = Arrangement.Start
     ) {
-        Surface(
-            shape = RoundedCornerShape(20.dp, 20.dp, 20.dp, 4.dp),
-            color = MaterialTheme.colorScheme.primaryContainer,
-            modifier = Modifier.widthIn(0.dp, 280.dp)
-        ) {
-            Text(
-                text = message?.message.orEmpty(),
-                modifier = Modifier.padding(14.dp),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+        Column(horizontalAlignment = Alignment.Start) {
+            Surface(
+                shape = RoundedCornerShape(20.dp, 20.dp, 4.dp, 20.dp),
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                modifier = Modifier.widthIn(0.dp, 280.dp)
+            ) {
+                Text(
+                    text = message?.message.orEmpty(),
+                    modifier = Modifier.padding(14.dp),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            }
+
+            // BLEU Score outside and below the bubble
+            if (message?.bleuScore != null) {
+                Text(
+                    text = "BLEU Score: ${"%.2f".format(message.bleuScore)}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    modifier = Modifier
+                        .padding(top = 4.dp, end = 8.dp)
+                )
+            }
         }
     }
 }
+
+
+//@Composable
+//fun SenderMessageView(message: Message?) {
+//    Row(
+//        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+//        horizontalArrangement = Arrangement.Start
+//    ) {
+//        Surface(
+//            shape = RoundedCornerShape(20.dp, 20.dp, 20.dp, 4.dp),
+//            color = MaterialTheme.colorScheme.primaryContainer,
+//            modifier = Modifier.widthIn(0.dp, 280.dp)
+//        ) {
+//            Column(modifier = Modifier.padding(12.dp)) {
+//                Text(
+//                    text = message?.message.orEmpty(),
+//                    style = MaterialTheme.typography.bodyLarge,
+//                    color = MaterialTheme.colorScheme.onSecondaryContainer
+//                )
+//            }
+//        }
+//
+//        // Show BLEU score cleanly below the bubble
+//        if (message?.bleuScore != null) {
+//            Text(
+//                text = "BLEU Score: ${"%.2f".format(message.bleuScore)}",
+//                style = MaterialTheme.typography.labelSmall,
+//                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
+//                modifier = Modifier
+//                    .padding(top = 12.dp)
+//                    .padding(horizontal = 16.dp)
+//            )
+//        }
+//    }
+//}
+
+//            Text(
+//                text = message?.message.orEmpty(),
+//                modifier = Modifier.padding(14.dp),
+//                style = MaterialTheme.typography.bodyLarge,
+//                color = MaterialTheme.colorScheme.onPrimaryContainer
+//            )
+//            if (message?.bleuScore != null) {
+//                Text(
+//                    text = "BLEU Score: ${"%.2f".format(message.bleuScore)}",
+//                    style = MaterialTheme.typography.labelSmall,
+//                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f)
+//                )
+//            }
+//        }
+//    }
+//}
 
 @Composable
 fun ReceiverMessageView(message: Message?) {
@@ -332,6 +409,13 @@ fun ReceiverMessageView(message: Message?) {
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSecondaryContainer
             )
+//            if (message?.bleuScore != null) {
+//                Text(
+//                    text = "BLEU Score: ${"%.2f".format(message.bleuScore)}",
+//                    style = MaterialTheme.typography.labelSmall,
+//                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f)
+//                )
+//            }
         }
     }
 }

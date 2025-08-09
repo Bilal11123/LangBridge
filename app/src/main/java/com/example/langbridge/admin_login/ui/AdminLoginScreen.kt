@@ -38,7 +38,7 @@ fun AdminLoginScreen(
             if (it.status == "success") {
                 UserInfo.id = it.id
                 UserInfo.email = email
-                UserInfo.name = it.name
+                UserInfo.name.value = it.name
                 UserInfo.language = it.language
                 UserInfo.user_type = it.user_type
 

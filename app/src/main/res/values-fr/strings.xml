@@ -8,4 +8,14 @@
     <string name="type_message">Tapez un message</string>
     <string name="chatbot_placeholder">Demande-moi ne importe quoi</string>
     <string name="chatbot_header">Bot de discussion</string>
+    <string name="settings_header">Paramètres</string>
+    <string name="settings_change_name">Changer le nom</string>
+    <string name="settings_name_placeholder">Entrez un nouveau nom</string>
+    <string name="settings_change_password">Changer le mot de passe</string>
+    <string name="settings_password_placeholder">Entrez un nouveau mot de passe</string>
+    <string name="submit_button">Soumettre</string>
+    <string name="settings_change_Language">Changer de langue</string>
+    <string name="settings_language_placeholder">Sélectionnez la langue</string>
+    <string name="settings_language_button">Enregistrer la langue</string>
+    <string name="Logout_button">Déconnexion</string>
 </resources>

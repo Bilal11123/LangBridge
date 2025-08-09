@@ -20,7 +20,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,21 +28,15 @@ import androidx.navigation.NavController
 import com.example.langbridge.R
 import com.example.langbridge.Screens
 import com.example.langbridge.UserInfo
-import com.example.langbridge.common.ChooseLanguageDialog
 import com.example.langbridge.contacts.data.models.Contact
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ContactScreen(navController: NavController, viewModel: ContactViewModel = viewModel()) {
     val contactResponse by viewModel.contactResponse
-    var showDialog by remember { mutableStateOf(false) }
+    val userName by UserInfo.name
 
-    if (showDialog) {
-        ChooseLanguageDialog { language ->
-            viewModel.changeLanguage(language)
-            showDialog = false
-        }
-    }
+
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = viewModel.isLoading.value,
@@ -68,7 +61,7 @@ fun ContactScreen(navController: NavController, viewModel: ContactViewModel = vi
                             )
                         )
                         Text(
-                            text = UserInfo.name?: "User",
+                            text = userName ?: "User",
                             style = TextStyle(
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold
@@ -77,7 +70,10 @@ fun ContactScreen(navController: NavController, viewModel: ContactViewModel = vi
                     }
                 },
                 actions = {
-                    IconButton(onClick = { showDialog = true }) {
+                    IconButton(
+                        //onClick = { showDialog = true }
+                        onClick = { navController.navigate("settings_screen") }
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
                             contentDescription = "Settings"
@@ -276,38 +272,6 @@ fun ContactItem(contact: Contact?, onItemClick: (Contact?) -> Unit) {
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun RadioButtonGroup(
-    options: Map<String, String>,
-    selectedOption: String?,
-    onOptionSelected: (String) -> Unit
-) {
-    Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        options.entries.forEach { option ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                RadioButton(
-                    selected = (option.key == selectedOption),
-                    onClick = { onOptionSelected(option.key) }
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = option.value,
-                    style = MaterialTheme.typography.bodyLarge
                 )
             }
         }

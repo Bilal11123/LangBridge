@@ -12,7 +12,8 @@ data class Message(
     @SerialName("locale") val locale: String?,
     @SerialName("is_voice_message") val isVoiceMessage: Boolean = false,
     @SerialName("audio_content") val audioContent: String? = null,
-    @SerialName("duration_seconds") val durationSeconds: Int? = null
+    @SerialName("duration_seconds") val durationSeconds: Int? = null,
+    @SerialName("bleu_score") val bleuScore: Double? = null
 ) {
     fun getMessageType(): MessageType {
         return if (senderId == UserInfo.id) {
@@ -38,4 +39,3 @@ data class SocketMessage(
 data class MessageResponse(
     @SerialName("messages") val messages: List<Message>?
 )
-
